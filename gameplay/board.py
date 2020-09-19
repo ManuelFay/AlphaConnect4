@@ -14,17 +14,17 @@ class Board:
         self.turn = 0 if self.turn else 1
 
     def drop_piece(self, row, col):
-        self.board[row][col] = self.turn + 1
+        self.board[row, col] = self.turn + 1
         self.last_move = col
         self.update_turn()
 
     def is_valid_location(self, col):
-        return self.board[ROW_COUNT - 1][col] == 0
+        return self.board[ROW_COUNT - 1, col] == 0
 
     def get_next_open_row(self, col):
-        for row in range(ROW_COUNT):
-            if self.board[row][col] == 0:
-                return row
+        open_rows = np.where(self.board[:, col] == 0)[0]
+        if len(open_rows) > 0:
+            return min(open_rows)
         return None
 
     def __str__(self):
@@ -69,8 +69,5 @@ class Board:
         return False
 
     def get_valid_locations(self):
-        valid_locations = []
-        for col in range(COLUMN_COUNT):
-            if self.is_valid_location(col):
-                valid_locations.append(col)
-        return valid_locations
+        """Valid rows to play"""
+        return np.where(self.board[-1, :] == 0)[0]

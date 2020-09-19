@@ -3,6 +3,9 @@ import sys
 import math
 import random
 from tqdm import tqdm
+import time
+import pickle
+
 import pygame
 
 from gameplay.board import Board
@@ -18,9 +21,18 @@ class Game:
     def __init__(self):
         self.board = Board(turn=random.choice([0, 1]))
         self.game_over = False
-        self.tree = MCTS() if AI_TYPE == "mcts" else None
+        self.tree = None
+        if AI_TYPE == "mcts":
+            try:
+                # Load precomputed MC Tree
+                with open("tree.pickle", "rb") as file:
+                    self.tree = pickle.load(file)
+            except FileNotFoundError:
+                # Recreate from scratch
+                self.tree = MCTS()
 
-        print(self.board)
+        # Display the board in terminal
+        # print(self.board)
 
         self.visual_engine = VisualEngine()
         self.visual_engine.draw_board(self.board.board)
@@ -47,8 +59,18 @@ class Game:
             print(f"Score {score}")
         elif AI_TYPE == "mcts":
             board = Connect4Tree(self.board.board, turn=self.board.turn)
-            for _ in tqdm(range(MAX_ROLLOUT)):
+
+            # for _ in tqdm(range(MAX_ROLLOUT)):
+            #   self.tree.do_rollout(board)
+
+            timeout_start = time.time()
+            pbar = tqdm()
+            while time.time() < timeout_start + MAX_ROLLOUT:
                 self.tree.do_rollout(board)
+                pbar.update()
+
+            with open("tree.pickle", "wb") as file:
+                pickle.dump(self.tree, file)
             col = self.tree.choose(board).last_move
         else:
             raise NameError
@@ -89,5 +111,6 @@ class Game:
                     self.visual_engine.draw_board(self.board.board)
 
 
-Game()
+game = Game()
+
 pygame.time.wait(3000)
