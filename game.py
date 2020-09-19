@@ -1,19 +1,21 @@
+# pylint: disable=no-member
 import sys
 import math
+import random
 
 import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import *
+from gameplay.constants import YELLOW, RED, MAX_DEPTH, AI_ON, SQUARESIZE, RADIUS, BLACK
 
-from minimax.minimax_engine import MinimaxEngine
+from engines.minimax_engine import MinimaxEngine
 
 
 class Game:
     def __init__(self):
         self.board = Board()
-        self.turn = 0
+        self.turn = random.choice([0, 1])
         self.game_over = False
 
         print(self.board)

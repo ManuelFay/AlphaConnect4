@@ -2,10 +2,11 @@ import numpy as np
 
 from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
+
 class Board:
     def __init__(self, board=None):
         self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)) if board is None else board
-        assert type(self.board) == np.ndarray
+        assert isinstance(self.board, np.ndarray)
 
     def drop_piece(self, row, col, piece):
         self.board[row][col] = piece
@@ -14,44 +15,55 @@ class Board:
         return self.board[ROW_COUNT - 1][col] == 0
 
     def get_next_open_row(self, col):
-        for r in range(ROW_COUNT):
-            if self.board[r][col] == 0:
-                return r
+        for row in range(ROW_COUNT):
+            if self.board[row][col] == 0:
+                return row
+        return None
 
     def __str__(self):
         return str(np.flip(self.board, 0))
 
     def winning_move(self, piece):
         # Check horizontal locations for win
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(ROW_COUNT):
-                if self.board[r][c] == piece and self.board[r][c + 1] == piece and self.board[r][c + 2] == piece and \
-                        self.board[r][
-                            c + 3] == piece:
+        for col in range(COLUMN_COUNT - 3):
+            for row in range(ROW_COUNT):
+                if self.board[row][col] == piece and self.board[row][col + 1] == piece and self.board[row][
+                    col + 2] == piece and \
+                        self.board[row][
+                            col + 3] == piece:
                     return True
 
         # Check vertical locations for win
-        for c in range(COLUMN_COUNT):
-            for r in range(ROW_COUNT - 3):
-                if self.board[r][c] == piece and self.board[r + 1][c] == piece and self.board[r + 2][c] == piece and \
-                        self.board[r + 3][
-                            c] == piece:
+        for col in range(COLUMN_COUNT):
+            for row in range(ROW_COUNT - 3):
+                if self.board[row][col] == piece and self.board[row + 1][col] == piece and self.board[row + 2][
+                    col] == piece and \
+                        self.board[row + 3][
+                            col] == piece:
                     return True
 
         # Check positively sloped diagonals
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(ROW_COUNT - 3):
-                if self.board[r][c] == piece and self.board[r + 1][c + 1] == piece and self.board[r + 2][
-                    c + 2] == piece and \
-                        self.board[r + 3][
-                            c + 3] == piece:
+        for col in range(COLUMN_COUNT - 3):
+            for row in range(ROW_COUNT - 3):
+                if self.board[row][col] == piece and self.board[row + 1][col + 1] == piece and self.board[row + 2][
+                    col + 2] == piece and \
+                        self.board[row + 3][
+                            col + 3] == piece:
                     return True
 
         # Check negatively sloped diagonals
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(3, ROW_COUNT):
-                if self.board[r][c] == piece and self.board[r - 1][c + 1] == piece and self.board[r - 2][
-                    c + 2] == piece and \
-                        self.board[r - 3][
-                            c + 3] == piece:
+        for col in range(COLUMN_COUNT - 3):
+            for row in range(3, ROW_COUNT):
+                if self.board[row][col] == piece and self.board[row - 1][col + 1] == piece and self.board[row - 2][
+                    col + 2] == piece and \
+                        self.board[row - 3][
+                            col + 3] == piece:
                     return True
+        return False
+
+    def get_valid_locations(self):
+        valid_locations = []
+        for col in range(COLUMN_COUNT):
+            if self.is_valid_location(col):
+                valid_locations.append(col)
+        return valid_locations
