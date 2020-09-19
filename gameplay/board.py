@@ -4,12 +4,19 @@ from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class Board:
-    def __init__(self, board=None):
-        self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)) if board is None else board
+    def __init__(self, board=None, turn=0):
+        self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)).astype(np.uint8) if board is None else board
+        self.turn = turn
+        self.last_move = None
         assert isinstance(self.board, np.ndarray)
 
-    def drop_piece(self, row, col, piece):
-        self.board[row][col] = piece
+    def update_turn(self):
+        self.turn = 0 if self.turn else 1
+
+    def drop_piece(self, row, col):
+        self.board[row][col] = self.turn + 1
+        self.last_move = col
+        self.update_turn()
 
     def is_valid_location(self, col):
         return self.board[ROW_COUNT - 1][col] == 0

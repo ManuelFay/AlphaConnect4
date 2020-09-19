@@ -2,21 +2,23 @@
 import sys
 import math
 import random
-
+from tqdm import tqdm
 import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, MAX_DEPTH, AI_ON, SQUARESIZE, RADIUS, BLACK
+from gameplay.constants import YELLOW, RED, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT
 
 from engines.minimax_engine import MinimaxEngine
+from engines.mcts import MCTS
+from engines.mcts_interface import Connect4Tree
 
 
 class Game:
     def __init__(self):
-        self.board = Board()
-        self.turn = random.choice([0, 1])
+        self.board = Board(turn=random.choice([0, 1]))
         self.game_over = False
+        self.tree = MCTS() if AI_TYPE == "mcts" else None
 
         print(self.board)
 
@@ -25,37 +27,43 @@ class Game:
 
         self.play()
 
-    def update_turn(self):
-        self.turn = 0 if self.turn else 1
-
     def make_move(self, col):
         if self.board.is_valid_location(col):
             row = self.board.get_next_open_row(col)
-            self.board.drop_piece(row, col, self.turn + 1)
+            self.board.drop_piece(row, col)
 
-            if self.board.winning_move(self.turn + 1):
-                label = self.visual_engine.myfont.render(f"Player {self.turn + 1} wins!!", 1,
-                                                         YELLOW if self.turn else RED)
+            if self.board.winning_move((1-self.board.turn) + 1):
+                self.board.update_turn()
+                label = self.visual_engine.myfont.render(f"Player {self.board.turn + 1} wins!!", 1,
+                                                         YELLOW if self.board.turn else RED)
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
 
     def ai_move(self):
         """Naive AI method"""
-        col, score = MinimaxEngine(self.board.board).minimax(MAX_DEPTH, -math.inf, math.inf, True)
-        print(f"Score {score}")
+        if AI_TYPE == "minimax":
+            col, score = MinimaxEngine(self.board.board, turn=self.board.turn).minimax(MAX_DEPTH, -math.inf, math.inf,
+                                                                                       True)
+            print(f"Score {score}")
+        elif AI_TYPE == "mcts":
+            board = Connect4Tree(self.board.board, turn=self.board.turn)
+            for _ in tqdm(range(MAX_ROLLOUT)):
+                self.tree.do_rollout(board)
+            col = self.tree.choose(board).last_move
+        else:
+            raise NameError
         return col
 
     def play(self):
         while not self.game_over:
 
-            if self.turn == 1 and AI_ON:  # If it is the AI turn
+            if self.board.turn == 1 and AI_TYPE != "2_players":  # If it is the AI turn
 
                 col = self.ai_move()
 
                 self.make_move(col)
                 print(self.board)
                 self.visual_engine.draw_board(self.board.board)
-                self.update_turn()
                 continue
 
             for event in pygame.event.get():
@@ -65,7 +73,7 @@ class Game:
                 if event.type == pygame.MOUSEMOTION:
                     pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))
                     posx = event.pos[0]
-                    pygame.draw.circle(self.visual_engine.screen, YELLOW if self.turn else RED,
+                    pygame.draw.circle(self.visual_engine.screen, YELLOW if self.board.turn else RED,
                                        (posx, int(SQUARESIZE / 2)), RADIUS)
 
                 pygame.display.update()
@@ -79,7 +87,6 @@ class Game:
                     self.make_move(col)
                     print(self.board)
                     self.visual_engine.draw_board(self.board.board)
-                    self.update_turn()
 
 
 Game()
