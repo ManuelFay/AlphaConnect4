@@ -1,11 +1,11 @@
 # pylint: disable=no-member
 import sys
-import math
-import random
-from tqdm import tqdm
 import time
 import pickle
+import math
+import random
 
+from tqdm import tqdm
 import pygame
 
 from gameplay.board import Board

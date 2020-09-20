@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.signal import convolve2d
+
 
 from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
@@ -8,10 +10,15 @@ class Board:
         self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)).astype(np.uint8) if board is None else board
         self.turn = turn
         self.last_move = None
+        self.detection_kernels = [np.ones((1, 4), dtype=np.uint8),
+                                  np.ones((4, 1), dtype=np.uint8),
+                                  np.eye(4, dtype=np.uint8),
+                                  np.fliplr(np.eye(4, dtype=np.uint8))]
+
         assert isinstance(self.board, np.ndarray)
 
     def update_turn(self):
-        self.turn = 0 if self.turn else 1
+        self.turn = 1 - self.turn
 
     def drop_piece(self, row, col):
         self.board[row, col] = self.turn + 1
@@ -31,41 +38,9 @@ class Board:
         return str(np.flip(self.board, 0))
 
     def winning_move(self, piece):
-        # Check horizontal locations for win
-        for col in range(COLUMN_COUNT - 3):
-            for row in range(ROW_COUNT):
-                if self.board[row][col] == piece and self.board[row][col + 1] == piece and self.board[row][
-                    col + 2] == piece and \
-                        self.board[row][
-                            col + 3] == piece:
-                    return True
-
-        # Check vertical locations for win
-        for col in range(COLUMN_COUNT):
-            for row in range(ROW_COUNT - 3):
-                if self.board[row][col] == piece and self.board[row + 1][col] == piece and self.board[row + 2][
-                    col] == piece and \
-                        self.board[row + 3][
-                            col] == piece:
-                    return True
-
-        # Check positively sloped diagonals
-        for col in range(COLUMN_COUNT - 3):
-            for row in range(ROW_COUNT - 3):
-                if self.board[row][col] == piece and self.board[row + 1][col + 1] == piece and self.board[row + 2][
-                    col + 2] == piece and \
-                        self.board[row + 3][
-                            col + 3] == piece:
-                    return True
-
-        # Check negatively sloped diagonals
-        for col in range(COLUMN_COUNT - 3):
-            for row in range(3, ROW_COUNT):
-                if self.board[row][col] == piece and self.board[row - 1][col + 1] == piece and self.board[row - 2][
-                    col + 2] == piece and \
-                        self.board[row - 3][
-                            col + 3] == piece:
-                    return True
+        for kernel in self.detection_kernels:
+            if np.max(convolve2d(self.board == piece, kernel, mode="valid")) == 4:
+                return True
         return False
 
     def get_valid_locations(self):
