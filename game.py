@@ -80,8 +80,13 @@ class Game:
                 col = self.ai_move()
 
                 self.make_move(col)
+
                 # print(self.board)
                 self.visual_engine.draw_board(self.board.board)
+
+                # Save new tree exploration info
+                with open("tree.pickle", "wb") as file:
+                    pickle.dump(self.tree, file)
                 continue
 
             for event in pygame.event.get():
@@ -110,6 +115,4 @@ class Game:
 game = Game()
 game.play()
 
-with open("tree.pickle", "wb") as file:
-    pickle.dump(game.tree, file)
 pygame.time.wait(3000)

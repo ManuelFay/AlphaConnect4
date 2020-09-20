@@ -35,7 +35,7 @@ class Board:
         return None
 
     def __str__(self):
-        return str(np.flip(self.board, 0))
+        return np.flip(self.board, 0).tostring()
 
     def winning_move(self, piece):
         for kernel in self.detection_kernels:

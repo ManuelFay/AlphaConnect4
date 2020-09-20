@@ -33,6 +33,7 @@ class MCTS:
 
         print("\nConfidence per column: ")
         print([round(score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
+        print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=score)
 
     def do_rollout(self, node):
