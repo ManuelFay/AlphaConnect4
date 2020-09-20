@@ -39,7 +39,7 @@ class Board:
 
     def winning_move(self, piece):
         for kernel in self.detection_kernels:
-            if np.max(convolve2d(self.board == piece, kernel, mode="valid")) == 4:
+            if (convolve2d(self.board == piece, kernel, mode="valid") == 4).any():
                 return True
         return False
 

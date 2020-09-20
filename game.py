@@ -37,8 +37,6 @@ class Game:
         self.visual_engine = VisualEngine()
         self.visual_engine.draw_board(self.board.board)
 
-        self.play()
-
     def make_move(self, col):
         if self.board.is_valid_location(col):
             row = self.board.get_next_open_row(col)
@@ -52,7 +50,7 @@ class Game:
                 self.game_over = True
 
     def ai_move(self):
-        """Naive AI method"""
+        """AI method"""
         if AI_TYPE == "minimax":
             col, score = MinimaxEngine(self.board.board, turn=self.board.turn).minimax(MAX_DEPTH, -math.inf, math.inf,
                                                                                        True)
@@ -69,8 +67,6 @@ class Game:
                 self.tree.do_rollout(board)
                 pbar.update()
 
-            with open("tree.pickle", "wb") as file:
-                pickle.dump(self.tree, file)
             col = self.tree.choose(board).last_move
         else:
             raise NameError
@@ -84,7 +80,7 @@ class Game:
                 col = self.ai_move()
 
                 self.make_move(col)
-                print(self.board)
+                # print(self.board)
                 self.visual_engine.draw_board(self.board.board)
                 continue
 
@@ -107,10 +103,13 @@ class Game:
                     col = int(math.floor(posx / SQUARESIZE))
 
                     self.make_move(col)
-                    print(self.board)
+                    # print(self.board)
                     self.visual_engine.draw_board(self.board.board)
 
 
 game = Game()
+game.play()
 
+with open("tree.pickle", "wb") as file:
+    pickle.dump(game.tree, file)
 pygame.time.wait(3000)

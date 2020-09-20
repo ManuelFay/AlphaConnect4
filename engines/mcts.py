@@ -24,18 +24,19 @@ class MCTS:
             raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
-            return node.find_random_child()
+            return node.find_random_child()     # find_heuristic_child()
 
         def score(n):
             if self.visit_count[n] == 0:
                 return float("-inf")  # avoid unseen moves
             return self.q_value[n] / self.visit_count[n]  # average reward
 
-        print([score(n) for n in sorted(self.children[node], key=lambda x: x.last_move)])
+        print("\nConfidence per column: ")
+        print([round(score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=score)
 
     def do_rollout(self, node):
-        "Make the tree one layer better. (Train for one iteration.)"
+        """Make the tree one layer better. (Train for one iteration.)"""
         path = self._select(node)
         leaf = path[-1]
         self._expand(leaf)

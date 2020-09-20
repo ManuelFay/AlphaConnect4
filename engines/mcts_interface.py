@@ -1,5 +1,6 @@
 import random
 from engines.mcts import Node
+from engines.minimax_engine import MinimaxEngine
 from gameplay.constants import PLAYER_PIECE, AI_PIECE
 
 from gameplay.board import Board
@@ -34,6 +35,16 @@ class Connect4Tree(Board, Node):
         child.drop_piece(row, col)
         return child
 
+    def find_heuristic_child(self):
+
+        if self.is_terminal():
+            return None  # If the game is finished then no moves can be made
+
+        child = max(self.find_children(), key=lambda x: MinimaxEngine(x.board, turn=x.turn).score_position(x.turn + 1))
+        child = Connect4Tree(child.board.copy(), turn=child.turn)
+
+        return child
+
     def reward(self):
         if not self.is_terminal():
             raise RuntimeError(f"reward called on nonterminal board {self}")
@@ -49,7 +60,7 @@ class Connect4Tree(Board, Node):
         raise RuntimeError("board has unknown winner type")
 
     def __hash__(self):
-        return hash(str(self.board))
+        return hash(self.board.tostring())
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
