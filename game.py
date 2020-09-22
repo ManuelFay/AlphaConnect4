@@ -19,7 +19,7 @@ from engines.mcts_interface import Connect4Tree
 
 class Game:
     def __init__(self):
-        self.board = Board(turn=random.choice([0, 1]))
+        self.board = Board(board=None, turn=random.choice([0, 1]))
         self.game_over = False
         self.tree = None
         if AI_TYPE == "mcts":

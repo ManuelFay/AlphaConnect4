@@ -7,6 +7,19 @@ from gameplay.board import Board
 
 
 class Connect4Tree(Board, Node):
+    def __init__(self, board, turn):
+        self.id = None
+        super(Connect4Tree, self).__init__(board, turn)
+        self.update_id()
+
+    def create_child(self, row, col):
+        child = Connect4Tree(self.board.copy(), turn=self.turn)
+        child.drop_piece(row, col)
+        child.update_id()
+        return child
+
+    def update_id(self):
+        self.id = hash(self.board.tostring())
 
     def is_terminal(self):
         return self.winning_move(PLAYER_PIECE) or self.winning_move(AI_PIECE) or len(self.get_valid_locations()) == 0
@@ -19,9 +32,7 @@ class Connect4Tree(Board, Node):
 
         for col in self.get_valid_locations():
             row = self.get_next_open_row(col)
-            child = Connect4Tree(self.board.copy(), turn=self.turn)
-            child.drop_piece(row, col)
-            childs.add(child)
+            childs.add(self.create_child(row, col))
 
         return childs
 
@@ -31,19 +42,7 @@ class Connect4Tree(Board, Node):
 
         col = random.choice(self.get_valid_locations())
         row = self.get_next_open_row(col)
-        child = Connect4Tree(self.board.copy(), turn=self.turn)
-        child.drop_piece(row, col)
-        return child
-
-    def find_heuristic_child(self):
-
-        if self.is_terminal():
-            return None  # If the game is finished then no moves can be made
-
-        child = max(self.find_children(), key=lambda x: MinimaxEngine(x.board, turn=x.turn).score_position(x.turn + 1))
-        child = Connect4Tree(child.board.copy(), turn=child.turn)
-
-        return child
+        return self.create_child(row, col)
 
     def reward(self):
         if not self.is_terminal():
@@ -60,7 +59,7 @@ class Connect4Tree(Board, Node):
         raise RuntimeError("board has unknown winner type")
 
     def __hash__(self):
-        return hash(self.board.tostring())
+        return self.id
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()

@@ -6,7 +6,7 @@ from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class Board:
-    def __init__(self, board=None, turn=0):
+    def __init__(self, board, turn):
         self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)).astype(np.uint8) if board is None else board
         self.turn = turn
         self.last_move = None
