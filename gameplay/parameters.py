@@ -9,7 +9,9 @@ MAX_ROLLOUT = 3
 MAX_DEPTH = 7
 
 # Save tree search results for future reference  for the first SAVE_MOVES moves
+LOOKUP_PATH = None
 SAVE_MOVES = 0
+
 
 
 # Constants
@@ -18,6 +20,7 @@ BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+WHITE = (150, 150, 150)
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7

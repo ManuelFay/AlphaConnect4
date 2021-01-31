@@ -1,7 +1,7 @@
 import math
 import random
 
-from gameplay.constants import PLAYER_PIECE, AI_PIECE, EMPTY, ROW_COUNT, COLUMN_COUNT, WINDOW_LENGTH
+from gameplay.parameters import PLAYER_PIECE, AI_PIECE, EMPTY, ROW_COUNT, COLUMN_COUNT, WINDOW_LENGTH
 from gameplay.board import Board
 
 

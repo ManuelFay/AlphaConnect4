@@ -18,6 +18,11 @@ class MCTS:
         self.children = dict()  # children of each node
         self.exploration_weight = exploration_weight
 
+    def score(self, n):
+        if self.visit_count[n] == 0:
+            return float("-inf")  # avoid unseen moves
+        return self.q_value[n] / self.visit_count[n]  # average reward
+
     def choose(self, node):
         """Choose the best successor of node. (Choose a move in the game)"""
         if node.is_terminal():
@@ -26,15 +31,10 @@ class MCTS:
         if node not in self.children:
             return node.find_random_child()     # find_heuristic_child()
 
-        def score(n):
-            if self.visit_count[n] == 0:
-                return float("-inf")  # avoid unseen moves
-            return self.q_value[n] / self.visit_count[n]  # average reward
-
-        print("\nConfidence per column: ")
-        print([round(score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
-        print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
-        return max(self.children[node], key=score)
+        # print("\nConfidence per column: ")
+        # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
+        # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
+        return max(self.children[node], key=self.score)
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)"""
@@ -115,24 +115,24 @@ class Node(ABC):
     @abstractmethod
     def find_random_child(self):
         "Random successor of this board state (for more efficient simulation)"
-        return None
+        raise NotImplementedError
 
     @abstractmethod
     def is_terminal(self):
         "Returns True if the node has no children"
-        return True
+        raise NotImplementedError
 
     @abstractmethod
     def reward(self):
         "Assumes `self` is terminal node. 1=win, 0=loss, .5=tie, etc"
-        return 0
+        raise NotImplementedError
 
     @abstractmethod
     def __hash__(self):
         "Nodes must be hashable"
-        return 123456789
+        raise NotImplementedError
 
     @abstractmethod
     def __eq__(self, node2):
         "Nodes must be comparable"
-        return True
+        raise NotImplementedError
