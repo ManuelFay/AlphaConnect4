@@ -22,6 +22,7 @@ class Game:
         self.board = Board(board=None, turn=random.choice([0, 1]))
         self.game_over = False
         self.tree = None
+        self.ai_confidence: float = 0.5
         if AI_TYPE == "mcts":
             """
             try:
@@ -57,6 +58,15 @@ class Game:
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
 
+    def estimate_confidence(self, board):
+        """Confidence estimation assuming optimal adversary"""
+        # self.ai_confidence = self.tree.score(self.tree.choose(board))
+        optimal_board = self.tree.choose(board)
+        if not optimal_board.is_terminal():
+            return 1 - self.tree.score(self.tree.choose(optimal_board))
+        else:
+            return self.tree.score(optimal_board)
+
     def ai_move(self):
         """AI method"""
         if AI_TYPE == "minimax":
@@ -70,9 +80,15 @@ class Game:
             pbar = tqdm()
             while time.time() < timeout_start + MAX_ROLLOUT:
                 self.tree.do_rollout(board)
+                if self.tree.visit_count[board] > 200 and self.tree.visit_count[board] % 10 == 0:
+                    self.ai_confidence = self.estimate_confidence(board)
+                    self.visual_engine.draw_board(self.board.board, self.ai_confidence)
                 pbar.update()
 
-            col = self.tree.choose(board).last_move
+            optimal_board = self.tree.choose(board)
+            col = optimal_board.last_move
+            self.ai_confidence = self.estimate_confidence(board)
+            print(f"AI Confidence: {self.ai_confidence}")
         else:
             raise NameError
         return col
@@ -86,7 +102,7 @@ class Game:
                 col = self.ai_move()
                 self.make_move(col)
 
-                self.visual_engine.draw_board(self.board.board)
+                self.visual_engine.draw_board(self.board.board, self.ai_confidence)
 
                 # Save new tree exploration info
                 if self.board.move_number < SAVE_MOVES:
@@ -114,7 +130,7 @@ class Game:
 
                     self.make_move(col)
                     # print(self.board)
-                    self.visual_engine.draw_board(self.board.board)
+                    self.visual_engine.draw_board(self.board.board, self.ai_confidence)
 
 
 game = Game()
