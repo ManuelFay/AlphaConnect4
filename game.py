@@ -10,7 +10,7 @@ import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT
+from gameplay.constants import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT, SAVE_MOVES
 
 from engines.minimax_engine import MinimaxEngine
 from engines.mcts import MCTS
@@ -63,9 +63,6 @@ class Game:
         elif AI_TYPE == "mcts":
             board = Connect4Tree(self.board.board, turn=self.board.turn)
 
-            # for _ in tqdm(range(MAX_ROLLOUT)):
-            #   self.tree.do_rollout(board)
-
             timeout_start = time.time()
             pbar = tqdm()
             while time.time() < timeout_start + MAX_ROLLOUT:
@@ -78,6 +75,7 @@ class Game:
         return col
 
     def play(self):
+        """ Game routine - call the visual engine, the UI, the AI and the board state."""
         while not self.game_over:
 
             if self.board.turn == 1 and AI_TYPE != "2_players":  # If it is the AI turn
@@ -88,8 +86,9 @@ class Game:
                 self.visual_engine.draw_board(self.board.board)
 
                 # Save new tree exploration info
-                with open("tree.pickle", "wb") as file:
-                    pickle.dump(self.tree, file)
+                if self.board.move_number < SAVE_MOVES:
+                    with open("tree.pickle", "wb") as file:
+                        pickle.dump(self.tree, file)
                 continue
 
             for event in pygame.event.get():
