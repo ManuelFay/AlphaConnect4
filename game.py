@@ -10,7 +10,7 @@ import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT
+from gameplay.constants import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT, SAVE_MOVES
 
 from engines.minimax_engine import MinimaxEngine
 from engines.mcts import MCTS
@@ -49,6 +49,11 @@ class Game:
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
 
+            elif self.board.tie():
+                label = self.visual_engine.myfont.render("It's a tie!", 1, BLUE)
+                self.visual_engine.screen.blit(label, (40, 10))
+                self.game_over = True
+
     def ai_move(self):
         """AI method"""
         if AI_TYPE == "minimax":
@@ -57,9 +62,6 @@ class Game:
             print(f"Score {score}")
         elif AI_TYPE == "mcts":
             board = Connect4Tree(self.board.board, turn=self.board.turn)
-
-            # for _ in tqdm(range(MAX_ROLLOUT)):
-            #   self.tree.do_rollout(board)
 
             timeout_start = time.time()
             pbar = tqdm()
@@ -73,20 +75,20 @@ class Game:
         return col
 
     def play(self):
+        """ Game routine - call the visual engine, the UI, the AI and the board state."""
         while not self.game_over:
 
             if self.board.turn == 1 and AI_TYPE != "2_players":  # If it is the AI turn
 
                 col = self.ai_move()
-
                 self.make_move(col)
 
-                # print(self.board)
                 self.visual_engine.draw_board(self.board.board)
 
                 # Save new tree exploration info
-                with open("tree.pickle", "wb") as file:
-                    pickle.dump(self.tree, file)
+                if self.board.move_number < SAVE_MOVES:
+                    with open("tree.pickle", "wb") as file:
+                        pickle.dump(self.tree, file)
                 continue
 
             for event in pygame.event.get():
@@ -115,4 +117,4 @@ class Game:
 game = Game()
 game.play()
 
-pygame.time.wait(3000)
+pygame.time.wait(1500)
