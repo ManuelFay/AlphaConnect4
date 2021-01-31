@@ -23,6 +23,7 @@ class Game:
         self.game_over = False
         self.tree = None
         if AI_TYPE == "mcts":
+            """
             try:
                 # Load precomputed MC Tree
                 with open("tree.pickle", "rb") as file:
@@ -30,6 +31,8 @@ class Game:
             except FileNotFoundError:
                 # Recreate from scratch
                 self.tree = MCTS()
+            """
+            self.tree = MCTS()
 
         # Display the board in terminal
         # print(self.board)
@@ -117,4 +120,4 @@ class Game:
 game = Game()
 game.play()
 
-pygame.time.wait(1500)
+pygame.time.wait(2000)
