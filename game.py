@@ -10,7 +10,7 @@ import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT
+from gameplay.constants import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT
 
 from engines.minimax_engine import MinimaxEngine
 from engines.mcts import MCTS
@@ -49,6 +49,11 @@ class Game:
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
 
+            elif self.board.tie():
+                label = self.visual_engine.myfont.render("It's a tie!", 1, BLUE)
+                self.visual_engine.screen.blit(label, (40, 10))
+                self.game_over = True
+
     def ai_move(self):
         """AI method"""
         if AI_TYPE == "minimax":
@@ -78,10 +83,8 @@ class Game:
             if self.board.turn == 1 and AI_TYPE != "2_players":  # If it is the AI turn
 
                 col = self.ai_move()
-
                 self.make_move(col)
 
-                # print(self.board)
                 self.visual_engine.draw_board(self.board.board)
 
                 # Save new tree exploration info
@@ -115,4 +118,4 @@ class Game:
 game = Game()
 game.play()
 
-pygame.time.wait(3000)
+pygame.time.wait(1500)

@@ -43,6 +43,10 @@ class Board:
                 return True
         return False
 
+    def tie(self):
+        """Checks if board is full"""
+        return not (self.board == 0).any()
+
     def get_valid_locations(self):
         """Valid rows to play"""
         return np.where(self.board[-1, :] == 0)[0]
