@@ -1,5 +1,6 @@
 # pylint: disable=no-member
 import sys
+import os
 import time
 import pickle
 import math
@@ -10,7 +11,8 @@ import pygame
 
 from gameplay.board import Board
 from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT, SAVE_MOVES
+from gameplay.parameters import YELLOW, RED, BLUE, MAX_DEPTH, SQUARESIZE, RADIUS, BLACK, AI_TYPE, MAX_ROLLOUT, \
+    SAVE_MOVES, LOOKUP_PATH
 
 from engines.minimax_engine import MinimaxEngine
 from engines.mcts import MCTS
@@ -23,16 +25,11 @@ class Game:
         self.game_over = False
         self.tree = None
         self.ai_confidence: float = 0.5
-        if AI_TYPE == "mcts":
-            """
-            try:
-                # Load precomputed MC Tree
-                with open("tree.pickle", "rb") as file:
-                    self.tree = pickle.load(file)
-            except FileNotFoundError:
-                # Recreate from scratch
-                self.tree = MCTS()
-            """
+        if AI_TYPE == "mcts" and LOOKUP_PATH and os.path.isfile(LOOKUP_PATH):
+            # Load precomputed MC Tree
+            with open(LOOKUP_PATH, "rb") as file:
+                self.tree = pickle.load(file)
+        else:
             self.tree = MCTS()
 
         # Display the board in terminal
@@ -106,7 +103,7 @@ class Game:
 
                 # Save new tree exploration info
                 if self.board.move_number < SAVE_MOVES:
-                    with open("tree.pickle", "wb") as file:
+                    with open(LOOKUP_PATH, "wb") as file:
                         pickle.dump(self.tree, file)
                 continue
 

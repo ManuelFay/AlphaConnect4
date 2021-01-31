@@ -1,6 +1,6 @@
 import pygame
 
-from gameplay.constants import BLACK, BLUE, SQUARESIZE, COLUMN_COUNT, ROW_COUNT, RED, YELLOW, RADIUS, WHITE
+from gameplay.parameters import BLACK, BLUE, SQUARESIZE, COLUMN_COUNT, ROW_COUNT, RED, YELLOW, RADIUS, WHITE
 
 
 class VisualEngine:

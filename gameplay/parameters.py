@@ -9,7 +9,9 @@ MAX_ROLLOUT = 3
 MAX_DEPTH = 7
 
 # Save tree search results for future reference  for the first SAVE_MOVES moves
+LOOKUP_PATH = None
 SAVE_MOVES = 0
+
 
 
 # Constants

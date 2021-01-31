@@ -1,7 +1,7 @@
 import random
 from engines.mcts import Node
 from engines.minimax_engine import MinimaxEngine
-from gameplay.constants import PLAYER_PIECE, AI_PIECE
+from gameplay.parameters import PLAYER_PIECE, AI_PIECE
 
 from gameplay.board import Board
 
