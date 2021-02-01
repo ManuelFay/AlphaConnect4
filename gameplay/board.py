@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.signal import convolve2d
 
-
-from gameplay.parameters import ROW_COUNT, COLUMN_COUNT
+from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class Board:
