@@ -129,8 +129,8 @@ class Game:
                     # print(self.board)
                     self.visual_engine.draw_board(self.board.board, self.ai_confidence)
 
+        pygame.time.wait(2000)
+
 
 game = Game()
 game.play()
-
-pygame.time.wait(2000)

@@ -6,13 +6,11 @@ AI_TYPE = "mcts"
 # AI Computation time for mcts (in sec)
 MAX_ROLLOUT = 3
 # MAX_DEPTH (for minimax only)
-MAX_DEPTH = 7
+MAX_DEPTH = 5
 
 # Save tree search results for future reference  for the first SAVE_MOVES moves
 LOOKUP_PATH = None
 SAVE_MOVES = 0
-
-
 
 # Constants
 

@@ -5,7 +5,7 @@ Work in progress repo in which the final goal is to implement a Connect 4 AI tha
 Monte-Carlo Tree Search, and a neural policy and value estimator neural network. Currently, only the MCTS is implemented and is
 enough to beat a strong human player with a few seconds of rollout.
 
-A Minimax algorithm is also presented as one of the options but does not scale well when confronted with too much depth
+A Minimax algorithm (credits ```KeithGalli```) is also presented as one of the options but does not scale well when confronted with too much depth
 and is exploitable with a bit of strategy.
 
 ![Demo picture](pictures/demo.png)
