@@ -19,6 +19,8 @@ class Game:
         self.agent0 = agent0
         self.agent1 = agent1
 
+        self.result = None
+
         self.visual_engine = VisualEngine()
         self.visual_engine.draw_board(self.board.board)
 
@@ -29,26 +31,30 @@ class Game:
 
             if self.board.winning_move((1-self.board.turn) + 1):
                 self.board.update_turn()
-                label = self.visual_engine.myfont.render(f"Player {self.board.turn + 1} wins!!", 1,
+                label = self.visual_engine.myfont.render(f"Player {self.board.turn} wins!!", 1,
                                                          YELLOW if self.board.turn else RED)
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
+                self.result = self.board.turn
 
             elif self.board.tie():
                 label = self.visual_engine.myfont.render("It's a tie!", 1, BLUE)
                 self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
+                self.result = 0.5
 
     def play(self):
         """ Game routine - call the visual engine, the UI, the AI and the board state."""
         while not self.game_over:
+            self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+            pygame.display.update()
+
             if self.board.turn == 0 and self.agent0 is not None:  # If it is the AI turn
                 col = self.agent0.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
                 continue
 
             if self.board.turn == 1 and self.agent1 is not None:  # If it is the AI turn
-
                 col = self.agent1.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
                 continue
@@ -71,9 +77,7 @@ class Game:
 
                     self.make_move(col)
 
-                self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
-                pygame.display.update()
-
         self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
         pygame.display.update()
         pygame.time.wait(3000)
+        return self.result
