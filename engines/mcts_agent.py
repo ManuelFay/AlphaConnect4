@@ -3,6 +3,7 @@ import time
 import pickle
 from tqdm import tqdm
 
+import numpy as np
 from engines.base_agent import BaseAgent
 from engines.mcts import MCTS
 from engines.mcts_interface import Connect4Tree
@@ -82,9 +83,6 @@ class MCTSAgent(BaseAgent):
         """Store learning samples"""
         self.save_tree()
         if self.is_training:
-            # Boards should be flipped to always have the same POV
-
-            training_samples = zip(self.boards, self.policies, [result]*len(self.boards))
-            # Write to file
-        pass
-
+            training_samples = np.array([self.boards, self.policies, [result]*len(self.boards)])
+            # Should be in append mode
+            # np.save("training.npy", training_samples)
