@@ -28,7 +28,14 @@ class MCTSAgent(BaseAgent):
 
     def save_state(self, board):
         policy = self.tree.get_policy(board)
-        board_ = board.board
+        board_ = board.board.copy()
+
+        # Flip board so that agent always has pieces #1
+        if board.turn == 1:
+            # Would be better just to switch dimensions around when we will have 2 layers
+            board_[board.board == 1] = 2
+            board_[board.board == 2] = 1
+
         self.policies.append(policy)
         self.boards.append(board_)
 

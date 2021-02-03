@@ -7,15 +7,15 @@ from engines.minimax_agent import MinimaxAgent
 
 # Setup players (None is a human player, MCTSAgent, MinimaxAgent)
 
-agent0 = None
+# agent0 = None
 # agent0 = MinimaxAgent(max_depth=5, is_agent1=False)
-# agent0 = MCTSAgent(simulation_time=1, tree_path=None)
+agent0 = MCTSAgent(simulation_time=1, tree_path=None)
 
 agent1 = MCTSAgent(simulation_time=3, tree_path=None)
 # agent1 = NeuralMCTSAgent(simulation_time=3, tree_path=None)
 # agent1 = MinimaxAgent(max_depth=5, is_agent1=True)
 
-game = Game(agent0=agent0, agent1=agent1)
+game = Game(agent0=agent0, agent1=agent1, enable_ui=True)
 result = game.play()
 
 if result == 0:

@@ -11,8 +11,15 @@ class NeuralInterface:
 
     def score(self, node):
         """Should include logic for who's turn it is and get based on that
-        Board should be one-hot encoded / categorical"""
-        input_ = torch.from_numpy(node.board).float()
+        Board should be one-hot encoded / categorical
+        Flip board so that agent is always with pieces #1"""
+        board = node.board.copy()
+        if node.turn == 1:
+            # Would be better just to switch dimensions around when we will have 2 layers
+            board[node.board == 1] = 2
+            board[node.board == 2] = 1
+
+        input_ = torch.from_numpy(board).float()
         col_evaluation, pos_evaluation = self.model(input_)
 
         score = self.softmax(pos_evaluation)[1].item()
