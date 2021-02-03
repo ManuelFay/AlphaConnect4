@@ -46,17 +46,19 @@ class Game:
     def play(self):
         """ Game routine - call the visual engine, the UI, the AI and the board state."""
         while not self.game_over:
-            self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
-            pygame.display.update()
 
             if self.board.turn == 0 and self.agent0 is not None:  # If it is the AI turn
                 col = self.agent0.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
+                self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                pygame.display.update()
                 continue
 
             if self.board.turn == 1 and self.agent1 is not None:  # If it is the AI turn
                 col = self.agent1.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
+                self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                pygame.display.update()
                 continue
 
             for event in pygame.event.get():
@@ -76,6 +78,9 @@ class Game:
                     col = int(math.floor(posx / SQUARESIZE))
 
                     self.make_move(col)
+
+                self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                pygame.display.update()
 
         self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
         pygame.display.update()
