@@ -28,14 +28,14 @@ class NeuralMCTS(MCTS):
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)
-        In the neural version, """
+        In the neural version, score leafs with NN and store policy vectors """
         path = self._select(node)
         leaf = path[-1]
         self._expand(leaf)
         if leaf.is_terminal():
             reward = 1 - leaf.reward()
         else:
-            # Verify turn if should be inversed
+            # TODO: Give turn info to neural interface
             score, policy = self.neural_interface.score(leaf)
             reward = 1 - score
 
