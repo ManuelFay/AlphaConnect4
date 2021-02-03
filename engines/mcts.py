@@ -23,6 +23,9 @@ class MCTS:
             return float("-inf")  # avoid unseen moves
         return self.q_value[n] / self.visit_count[n]  # average reward
 
+    def get_policy(self, node):
+        return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
+
     def choose(self, node):
         """Choose the best successor of node. (Choose a move in the game)"""
         if node.is_terminal():

@@ -4,8 +4,7 @@ import pickle
 from tqdm import tqdm
 
 from engines.base_agent import BaseAgent
-# from engines.mcts import MCTS
-from engines.neural_mcts import NeuralMCTS as MCTS
+from engines.mcts import MCTS
 from engines.mcts_interface import Connect4Tree
 
 
@@ -20,6 +19,11 @@ class MCTSAgent(BaseAgent):
             # Load precomputed MC Tree
             with open(tree_path, "rb") as file:
                 self.tree = pickle.load(file)
+
+    def save_state(self, board, turn):
+        board_ = Connect4Tree(board, turn=turn)
+        policy = self.tree.get_policy(board_)
+        # TODO: save board_ and policy as training samples
 
     def estimate_confidence(self, board):
         """Confidence estimation assuming optimal adversary"""

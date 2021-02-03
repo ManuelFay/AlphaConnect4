@@ -1,11 +1,12 @@
 import torch
 
 from neural_evaluator.stub_nn import StubNet
+from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class NeuralInterface:
     def __init__(self):
-        self.model = StubNet(num_rows=6, num_cols=7)
+        self.model = StubNet(num_rows=ROW_COUNT, num_cols=COLUMN_COUNT)
         self.softmax = torch.nn.Softmax(dim=0)
 
     def score(self, node):
