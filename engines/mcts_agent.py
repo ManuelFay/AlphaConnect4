@@ -4,7 +4,8 @@ import pickle
 from tqdm import tqdm
 
 from engines.base_agent import BaseAgent
-from engines.mcts import MCTS
+# from engines.mcts import MCTS
+from engines.neural_mcts import NeuralMCTS as MCTS
 from engines.mcts_interface import Connect4Tree
 
 

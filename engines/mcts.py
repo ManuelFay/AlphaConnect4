@@ -29,7 +29,7 @@ class MCTS:
             raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
-            return node.find_random_child()     # find_heuristic_child()
+            return node.find_random_child()
 
         # print("\nConfidence per column: ")
         # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
