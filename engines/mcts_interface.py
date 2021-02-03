@@ -1,6 +1,5 @@
 import random
 from engines.mcts import Node
-from engines.minimax_engine import MinimaxEngine
 from gameplay.constants import PLAYER_PIECE, AI_PIECE
 
 from gameplay.board import Board
@@ -46,7 +45,7 @@ class Connect4Tree(Board, Node):
 
     def reward(self):
         if not self.is_terminal():
-            raise RuntimeError(f"reward called on nonterminal board {self}")
+            raise RuntimeError(f"reward called on non-terminal board {self}")
 
         if (self.winning_move(piece=2) and (self.turn == 1)) or (self.winning_move(piece=1) and (self.turn == 0)):
             # It's your turn and you've already won. Should be impossible.

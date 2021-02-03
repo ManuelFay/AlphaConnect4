@@ -8,6 +8,7 @@ import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
+import numpy as np
 
 
 class MCTS:
@@ -27,7 +28,6 @@ class MCTS:
     def get_policy(self, node):
         # TODO: check which version is most efficient
         # return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
-
         visit_count = self.visit_count[node]
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
@@ -44,8 +44,9 @@ class MCTS:
         # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=self.score)
 
-    def choose_stochastic(self, node):
-        """Sample from the policy instead of choosing the max (to generate training samples)"""
+    def choose_stochastic(self, node, temperature: float = 0.5):
+        """Sample from the policy instead of choosing the max (to generate training samples)
+        Temperature controls the degree of exploration and could be adjusted throughout the game"""
         if node.is_terminal():
             raise RuntimeError(f"choose called on terminal node {node}")
 
@@ -53,9 +54,11 @@ class MCTS:
             return node.find_random_child()     # find_heuristic_child()
 
         # Sample from the policy instead of choosing the max (to generate training samples)
-        childrens = list(self.children[node])
-        visit_count = self.visit_count[node]
-        return random.choices(childrens, weights=[self.visit_count[n]/visit_count for n in childrens]).pop()
+        childs = list(self.children[node])
+        # visit_count = self.visit_count[node]
+        visit_count = np.sum([self.visit_count[n]**(1/temperature) for n in childs])
+        weights = [(self.visit_count[n]**(1/temperature))/visit_count for n in childs]
+        return random.choices(childs, weights=weights).pop()
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)"""
