@@ -85,4 +85,10 @@ class Game:
         self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
         pygame.display.update()
         pygame.time.wait(3000)
+
+        if self.agent0:
+            self.agent0.kill_agent(result=self.result if self.result == 0.5 else int(self.result == 0))
+        if self.agent1:
+            self.agent1.kill_agent(result=self.result if self.result == 0.5 else int(self.result == 1))
+
         return self.result

@@ -4,6 +4,7 @@ Luke Harold Miles, July 2019, Public Domain Dedication
 See also https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
 https://gist.github.com/qpwo/c538c6f73727e254fdc7fab81024f6e1
 """
+import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
@@ -24,7 +25,11 @@ class MCTS:
         return self.q_value[n] / self.visit_count[n]  # average reward
 
     def get_policy(self, node):
-        return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
+        # TODO: check which version is most efficient
+        # return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
+
+        visit_count = self.visit_count[node]
+        return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
     def choose(self, node):
         """Choose the best successor of node. (Choose a move in the game)"""
@@ -38,6 +43,19 @@ class MCTS:
         # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
         # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=self.score)
+
+    def choose_stochastic(self, node):
+        """Sample from the policy instead of choosing the max (to generate training samples)"""
+        if node.is_terminal():
+            raise RuntimeError(f"choose called on terminal node {node}")
+
+        if node not in self.children:
+            return node.find_random_child()     # find_heuristic_child()
+
+        # Sample from the policy instead of choosing the max (to generate training samples)
+        childrens = list(self.children[node])
+        visit_count = self.visit_count[node]
+        return random.choices(childrens, weights=[self.visit_count[n]/visit_count for n in childrens]).pop()
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)"""

@@ -1,6 +1,5 @@
 from collections import defaultdict
 import math
-import random
 
 from engines.mcts import MCTS
 from neural_evaluator.neural_interface import NeuralInterface
@@ -13,18 +12,6 @@ class NeuralMCTS(MCTS):
         super().__init__(exploration_weight)
         self.p_value = defaultdict(int)  # total visit count for each node
         self.neural_interface = NeuralInterface()
-
-    def choose_stochastic(self, node):
-        """Sample from the policy instead of choosing the max (to generate training samples)"""
-        if node.is_terminal():
-            raise RuntimeError(f"choose called on terminal node {node}")
-
-        if node not in self.children:
-            return node.find_random_child()     # find_heuristic_child()
-
-        # Sample from the policy instead of choosing the max (to generate training samples)
-        childrens = list(self.children[node])
-        return random.choices(childrens, weights=[self.score(n) for n in childrens]).pop()
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)

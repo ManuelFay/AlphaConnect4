@@ -9,21 +9,28 @@ from engines.mcts_interface import Connect4Tree
 
 
 class MCTSAgent(BaseAgent):
-    def __init__(self, simulation_time: float = 3., tree_path: str = None):
+    def __init__(self, simulation_time: float = 3., tree_path: str = None, is_training: bool = False):
+        """is_training: weakens the agent to get more diverse training samples"""
         super().__init__()
         self.simulation_time = simulation_time
         self.tree_path = tree_path
         self.tree = MCTS()
+        self.is_training = is_training
 
         if tree_path and os.path.isfile(tree_path):
             # Load precomputed MC Tree
             with open(tree_path, "rb") as file:
                 self.tree = pickle.load(file)
 
-    def save_state(self, board, turn):
-        board_ = Connect4Tree(board, turn=turn)
-        policy = self.tree.get_policy(board_)
-        # TODO: save board_ and policy as training samples
+        if self.is_training:
+            self.boards = []
+            self.policies = []
+
+    def save_state(self, board):
+        policy = self.tree.get_policy(board)
+        board_ = board.board
+        self.policies.append(policy)
+        self.boards.append(board_)
 
     def estimate_confidence(self, board):
         """Confidence estimation assuming optimal adversary"""
@@ -47,11 +54,15 @@ class MCTSAgent(BaseAgent):
             #     self.visual_engine.draw_board(board, self.ai_confidence)
             pbar.update()
 
-        optimal_board = self.tree.choose(board)
+        if self.is_training:
+            optimal_board = self.tree.choose_stochastic(board)
+            self.save_state(board)
+        else:
+            optimal_board = self.tree.choose(board)
+
         col = optimal_board.last_move
         self.ai_confidence = self.estimate_confidence(board)
         print(f"AI Confidence: {self.ai_confidence}")
-        self.save_tree()
         return col
 
     def save_tree(self):
@@ -59,3 +70,14 @@ class MCTSAgent(BaseAgent):
         if self.tree_path and os.path.isfile(self.tree_path):
             with open(self.tree_path, "wb") as file:
                 pickle.dump(self.tree, file)
+
+    def kill_agent(self, result: float):
+        """Store learning samples"""
+        self.save_tree()
+        if self.is_training:
+            # Boards should be flipped to always have the same POV
+
+            training_samples = zip(self.boards, self.policies, [result]*len(self.boards))
+            # Write to file
+        pass
+
