@@ -8,7 +8,7 @@ class Board:
     def __init__(self, board, turn):
         self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)).astype(np.uint8) if board is None else board
         self.turn = turn
-        self.move_number: int = 0
+        self.move_number: int = (self.board != 0).sum()
         self.last_move = None
         self.detection_kernels = [np.ones((1, 4), dtype=np.uint8),
                                   np.ones((4, 1), dtype=np.uint8),

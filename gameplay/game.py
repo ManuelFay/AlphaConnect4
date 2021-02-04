@@ -55,6 +55,7 @@ class Game:
                 col = self.agent0.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
                 if self.visual_engine:
+                    print(f"Agent 0 Confidence: {self.agent0.ai_confidence}")
                     self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
                 continue
 
@@ -62,6 +63,7 @@ class Game:
                 col = self.agent1.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
                 if self.visual_engine:
+                    print(f"Agent 1 Confidence: {self.agent1.ai_confidence}")
                     self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
                 continue
 

@@ -17,6 +17,7 @@ class MCTSAgent(BaseAgent):
         self.tree_path = tree_path
         self.tree = MCTS()
         self.is_training = is_training
+        self.training_path = "training.npy"
 
         if tree_path and os.path.isfile(tree_path):
             # Load precomputed MC Tree
@@ -53,24 +54,27 @@ class MCTSAgent(BaseAgent):
         board = Connect4Tree(board, turn=turn)
 
         timeout_start = time.time()
-        pbar = tqdm()
+        if not self.is_training:
+            pbar = tqdm()
         while time.time() < timeout_start + self.simulation_time:
             self.tree.do_rollout(board)
             # TODO Async if we want dynamic confidence updates
             # if self.tree.visit_count[board] > 200 and self.tree.visit_count[board] % 10 == 0:
             #     self.ai_confidence = self.estimate_confidence(board)
             #     self.visual_engine.draw_board(board, self.ai_confidence)
-            pbar.update()
+            if not self.is_training:
+                pbar.update()
 
         if self.is_training:
-            optimal_board = self.tree.choose_stochastic(board)
             self.save_state(board)
+
+        if board.move_number < 10:
+            optimal_board = self.tree.choose_stochastic(board, temperature=0.5)
         else:
             optimal_board = self.tree.choose(board)
 
         col = optimal_board.last_move
         self.ai_confidence = self.estimate_confidence(board)
-        print(f"AI Confidence: {self.ai_confidence}")
         return col
 
     def save_tree(self):
@@ -83,6 +87,14 @@ class MCTSAgent(BaseAgent):
         """Store learning samples"""
         self.save_tree()
         if self.is_training:
-            training_samples = np.array([self.boards, self.policies, [result]*len(self.boards)])
+            training_samples = np.array([self.boards, self.policies, [result]*len(self.boards)], dtype=object)
             # Should be in append mode
-            # np.save("training.npy", training_samples)
+
+            if os.path.isfile(self.training_path):
+                train_ = np.load(self.training_path, allow_pickle=True)
+                train_ = np.hstack((train_, training_samples))
+            else:
+                train_ = training_samples
+
+            # print(f"{train_.shape[1]} total training samples")
+            np.save("training.npy", train_)
