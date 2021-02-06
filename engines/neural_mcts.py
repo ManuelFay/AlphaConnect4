@@ -22,7 +22,6 @@ class NeuralMCTS(MCTS):
         if leaf.is_terminal():
             reward = 1 - leaf.reward()
         else:
-            # TODO: Give turn info to neural interface
             score, policy = self.neural_interface.score(leaf)
             reward = 1 - score
 
