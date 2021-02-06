@@ -7,6 +7,7 @@ from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 class NeuralInterface:
     def __init__(self):
         self.model = StubNet(num_rows=ROW_COUNT, num_cols=COLUMN_COUNT)
+        self.model.eval()
         self.softmax = torch.nn.Softmax(dim=0)
 
     def score(self, node):
@@ -20,8 +21,8 @@ class NeuralInterface:
             board[node.board == 2] = 1
 
         input_ = torch.from_numpy(board).float()
-        col_evaluation, pos_evaluation = self.model(input_)
+        col_evaluation, score_evaluation = self.model(input_)
 
-        score = self.softmax(pos_evaluation)[1].item()
-        policy = self.softmax(col_evaluation).detach().cpu().numpy()
+        score = self.softmax(score_evaluation.squeeze())[1].item()
+        policy = self.softmax(col_evaluation.squeeze()).detach().cpu().numpy()
         return score, policy

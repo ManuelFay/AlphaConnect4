@@ -9,6 +9,6 @@ class StubNet(torch.nn.Module):
 
     def forward(self, x):
         x = x.view(-1, self.linear.in_features)
-        col_x = self.linear(x)
-        pos_x = self.linear2(x)
-        return col_x, pos_x
+        column_x = self.linear(x)
+        score_x = self.linear2(x)
+        return column_x, score_x
