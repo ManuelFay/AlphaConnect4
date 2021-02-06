@@ -25,9 +25,9 @@ class NeuralMCTS(MCTS):
             score, policy = self.neural_interface.score(leaf)
             reward = 1 - score
 
-            # to add to each children: self.p_value[node] += policy
-            for p, n in zip(policy, sorted(self.children[leaf], key=lambda x: x.last_move)):
-                self.p_value[n] = p
+            for child in self.children[leaf]:
+                self.p_value[child] = policy[child.last_move]
+
         self._backpropagate(path, reward)
 
     def _uct_select(self, node):

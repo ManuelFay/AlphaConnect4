@@ -10,13 +10,18 @@ from engines.mcts_interface import Connect4Tree
 
 
 class MCTSAgent(BaseAgent):
-    def __init__(self, simulation_time: float = 3., tree_path: str = None, is_training: bool = False):
+    def __init__(self,
+                 simulation_time: float = 3.,
+                 tree_path: str = None,
+                 is_training: bool = False,
+                 show_pbar: bool = False):
         """is_training: weakens the agent to get more diverse training samples"""
         super().__init__()
         self.simulation_time = simulation_time
         self.tree_path = tree_path
         self.tree = MCTS()
         self.is_training = is_training
+        self.show_pbar = show_pbar and (not is_training)
         self.training_path = "training.npy"
 
         if tree_path and os.path.isfile(tree_path):
@@ -54,7 +59,7 @@ class MCTSAgent(BaseAgent):
         board = Connect4Tree(board, turn=turn)
 
         timeout_start = time.time()
-        if not self.is_training:
+        if self.show_pbar:
             pbar = tqdm()
         while time.time() < timeout_start + self.simulation_time:
             self.tree.do_rollout(board)
@@ -62,13 +67,13 @@ class MCTSAgent(BaseAgent):
             # if self.tree.visit_count[board] > 200 and self.tree.visit_count[board] % 10 == 0:
             #     self.ai_confidence = self.estimate_confidence(board)
             #     self.visual_engine.draw_board(board, self.ai_confidence)
-            if not self.is_training:
+            if self.show_pbar:
                 pbar.update()
 
         if self.is_training:
             self.save_state(board)
 
-        if board.move_number < 10:
+        if (board.move_number < 10) and self.is_training:
             optimal_board = self.tree.choose_stochastic(board, temperature=0.5)
         else:
             optimal_board = self.tree.choose(board)

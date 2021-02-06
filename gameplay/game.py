@@ -22,7 +22,7 @@ class Game:
         self.result = None
         self.visual_engine = None
 
-        if enable_ui and self.agent0 and self.agent1:
+        if enable_ui:
             self.visual_engine = VisualEngine()
             self.visual_engine.draw_board(self.board.board)
 
