@@ -17,9 +17,9 @@ class NeuralMCTSAgent(MCTSAgent):
 
         optimal_board = self.tree.choose(board)
         if not optimal_board.is_terminal():
-            score, _ = self.tree.neural_interface.score(self.tree.choose(optimal_board))
+            score, _ = self.tree.neural_interface.score(optimal_board)
             score = 1 - score
         else:
-            score, _ = self.tree.neural_interface.score(optimal_board)
+            score, _ = self.tree.neural_interface.score(board)
 
         return score
