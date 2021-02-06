@@ -28,7 +28,7 @@ class MCTS:
     def get_policy(self, node):
         # TODO: check which version is most efficient
         # return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
-        visit_count = self.visit_count[node]
+        visit_count = max(1, self.visit_count[node] - 1)
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
     def choose(self, node):

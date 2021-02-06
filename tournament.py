@@ -32,10 +32,11 @@ def instanciator(player: Player):
 contestants = [Player("p1", "mcts", time=3),
                Player("p2", "neural_mcts", time=3, pretrained_path="/home/manu/perso/RL_Connect4/model.pth"),
                Player("p3", "minimax", time=5),
-               Player("p4", "neural_mcts", time=3)
+               Player("p4", "neural_mcts", time=3),
+               Player("p5", "neural_mcts", time=1,  pretrained_path="/home/manu/perso/RL_Connect4/model.pth")
                ]
 
-for _ in range(30):
+for _ in range(100):
     players = sample(contestants, k=2)
     print(f"Game between {players[0].name} and {players[1].name}")
     game = Game(agent0=instanciator(players[0]), agent1=instanciator(players[1]), enable_ui=False)

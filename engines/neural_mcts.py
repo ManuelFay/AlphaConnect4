@@ -37,12 +37,11 @@ class NeuralMCTS(MCTS):
         # All children of node should already be expanded:
         assert all(n in self.children for n in self.children[node])
 
-        log_n_vertex = math.log(self.visit_count[node])
+        vertex_count = math.sqrt(self.visit_count[node])
 
         def uct(n):
             "Upper confidence bound for trees"
-            return self.q_value[n] / self.visit_count[n] + self.exploration_weight * self.p_value[n] * math.sqrt(
-                log_n_vertex / self.visit_count[n]
-            )
+            return self.q_value[n] / self.visit_count[n] + self.exploration_weight * self.p_value[n] * vertex_count / (
+                        1 + self.visit_count[n])
 
         return max(self.children[node], key=uct)

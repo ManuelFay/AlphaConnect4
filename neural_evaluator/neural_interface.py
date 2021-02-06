@@ -16,7 +16,8 @@ class NeuralInterface:
     def score(self, node):
         """Should include logic for who's turn it is and get based on that
         Board should be one-hot encoded / categorical
-        Flip board so that agent is always with pieces #1"""
+        Flip board so that agent is always with pieces #1
+        Score is from the POV of the next to play"""
         board = node.board.copy()
         if node.turn == 1:
             # Would be better just to switch dimensions around when we will have 2 layers
