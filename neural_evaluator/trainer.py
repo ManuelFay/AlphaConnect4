@@ -11,8 +11,6 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torch.optim.adam import Adam
 
-
-from neural_evaluator.stub_nn import StubNet
 from neural_evaluator.dataset import Connect4Dataset
 from neural_evaluator.custom_loss import AlphaLoss
 
@@ -23,13 +21,13 @@ class TrainingArgs:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     batch_size: int = 50
     print_progress: bool = False
-    embedding_output_path: Optional[str] = None
+    model_output_path: Optional[str] = None
     from_pretrained: Optional[str] = None
 
 
 class Trainer:
     def __init__(self,
-                 model: StubNet,
+                 model,
                  train_dataset: Connect4Dataset,
                  test_dataset: Connect4Dataset,
                  training_args: TrainingArgs = TrainingArgs()):
@@ -38,6 +36,10 @@ class Trainer:
         self.train_dataset = train_dataset
         self.test_dataset = test_dataset
         self.training_args = training_args
+        
+        if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
+            self.model.load_state_dict(torch.load(self.training_args.from_pretrained))
+            
         self.optimizer = Adam(self.model.parameters(), lr=0.01)
         self.loss_function = AlphaLoss(weight=1)
         self.writer = SummaryWriter()
@@ -70,10 +72,10 @@ class Trainer:
             self.writer.add_scalar("Loss/train", total_loss, epoch)
             self.infer(epoch=epoch)
             if self.training_args.print_progress:
-                print(f"Epoch {epoch} --> {total_loss}")
+                print(f"\n Loss/train: {total_loss} - {epoch}")
 
-        if self.training_args.embedding_output_path:
-            self.model.save_pretrained(self.training_args.embedding_output_path)
+        if self.training_args.model_output_path:
+            torch.save(self.model.state_dict(), self.training_args.model_output_path)
 
     def infer(self, test_dataset=None, epoch=None, return_acc: bool = False):
         self.model.eval()
@@ -81,8 +83,6 @@ class Trainer:
                                  batch_size=self.training_args.batch_size,
                                  shuffle=False)
 
-        acc = []
-        results = []
         total_loss = 0
         for batch in data_loader:
             boards = batch['boards'].to(self.training_args.device)
@@ -97,6 +97,5 @@ class Trainer:
 
         if epoch is not None:
             self.writer.add_scalar("Loss/test", total_loss, epoch)
-        if return_acc:
-            return acc
-        return np.array(results)
+        if self.training_args.print_progress:
+            print(f"\n Loss/test: {total_loss} - {epoch}")

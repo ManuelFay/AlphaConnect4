@@ -2,6 +2,7 @@ import numpy as np
 
 from neural_evaluator.dataset import Connect4Dataset
 from neural_evaluator.stub_nn import StubNet
+from neural_evaluator.naive_nn import NaiveNet
 from neural_evaluator.trainer import Trainer, TrainingArgs
 
 from gameplay.constants import ROW_COUNT, COLUMN_COUNT
@@ -24,7 +25,7 @@ def normalize_policies(boards, policies):
 
 
 data = np.load("/home/manu/perso/RL_Connect4/training.npy", allow_pickle=True)
-print(f"# of training samples: {data.shape[1]}")
+print(f"Number of training samples: {data.shape[1]}")
 
 new_policies = normalize_policies(data[0], data[1])
 
@@ -33,10 +34,12 @@ test_set = Connect4Dataset(data[0], new_policies, data[2], training=False)
 
 
 args = TrainingArgs(
-    batch_size=50,
-    print_progress=True
+    train_epochs=10,
+    batch_size=500,
+    print_progress=True,
+    model_output_path="/home/manu/perso/RL_Connect4/model.pth"
 )
-trainer = Trainer(model=StubNet(ROW_COUNT, COLUMN_COUNT),
+trainer = Trainer(model=NaiveNet(ROW_COUNT, COLUMN_COUNT),
                   train_dataset=train_set,
                   test_dataset=test_set,
                   training_args=args
