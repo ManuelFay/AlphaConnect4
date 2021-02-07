@@ -24,7 +24,7 @@ def normalize_policies(boards, policies):
     return np.array(new_pols)
 
 
-data = np.load("/home/manu/perso/RL_Connect4/training.npy", allow_pickle=True)
+data = np.load("/training_0.npy", allow_pickle=True)
 print(f"Number of training samples: {data.shape[1]}")
 
 new_policies = normalize_policies(data[0], data[1])

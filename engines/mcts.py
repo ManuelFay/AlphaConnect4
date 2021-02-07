@@ -31,7 +31,7 @@ class MCTS:
         visit_count = max(1, self.visit_count[node] - 1)
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
-    def choose(self, node):
+    def choose_(self, node):
         """Choose the best successor of node. (Choose a move in the game)"""
         if node.is_terminal():
             raise RuntimeError(f"choose called on terminal node {node}")
@@ -43,6 +43,17 @@ class MCTS:
         # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
         # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=self.score)
+
+    def choose(self, node):
+        """Choose the best successor of node. (Choose a move in the game)
+        Modified"""
+        if node.is_terminal():
+            raise RuntimeError(f"choose called on terminal node {node}")
+
+        if node not in self.children:
+            return node.find_random_child()
+
+        return max(self.children[node], key=lambda x: self.visit_count[x])
 
     def choose_stochastic(self, node, temperature: float = 0.5):
         """Sample from the policy instead of choosing the max (to generate training samples)

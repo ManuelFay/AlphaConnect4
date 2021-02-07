@@ -40,7 +40,7 @@ class Trainer:
         if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
             self.model.load_state_dict(torch.load(self.training_args.from_pretrained))
             
-        self.optimizer = Adam(self.model.parameters(), lr=0.01)
+        self.optimizer = Adam(self.model.parameters(), lr=0.005)
         self.loss_function = AlphaLoss(weight=1)
         self.writer = SummaryWriter()
 
@@ -70,7 +70,7 @@ class Trainer:
                 # Get the Python number from a 1-element Tensor by calling tensor.item()
                 total_loss += loss.item()
             self.writer.add_scalar("Loss/train", total_loss, epoch)
-            self.infer(epoch=epoch)
+            # self.infer(epoch=epoch)
             if self.training_args.print_progress:
                 print(f"\n Loss/train: {total_loss} - {epoch}")
 

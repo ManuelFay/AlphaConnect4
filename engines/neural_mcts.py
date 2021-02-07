@@ -23,6 +23,7 @@ class NeuralMCTS(MCTS):
             reward = 1 - leaf.reward()
         else:
             score, policy = self.neural_interface.score(leaf)
+            # TODO: Why is it reversed ?? - does not work otherwise
             reward = 1 - score
 
             for child in self.children[leaf]:

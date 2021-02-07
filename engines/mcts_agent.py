@@ -51,6 +51,7 @@ class MCTSAgent(BaseAgent):
         # self.ai_confidence = self.tree.score(self.tree.choose(board))
         optimal_board = self.tree.choose(board)
         if not optimal_board.is_terminal():
+            # TODO: check you can use choose for adversary
             return 1 - self.tree.score(self.tree.choose(optimal_board))
         else:
             return self.tree.score(optimal_board)
