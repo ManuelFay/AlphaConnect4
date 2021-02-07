@@ -1,4 +1,5 @@
 import torch
+import random
 
 
 class Connect4Dataset(torch.utils.data.Dataset):
@@ -12,7 +13,13 @@ class Connect4Dataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         # Add transforms for data augmentation
         idx = idx % self.n_samples
-        item = {"boards": torch.tensor(self.boards[idx], dtype=torch.float32),
+        tmp_boards = torch.tensor(self.boards[idx])
+        if self.training and random.random() < 0.5:
+            tmp_boards = torch.flip(tmp_boards, [1])
+        boards = torch.zeros(2, *tmp_boards.shape, dtype=torch.float32)
+        boards[0, tmp_boards == 1] = 1
+        boards[1, tmp_boards == 2] = 1
+        item = {"boards": boards,
                 "policies": torch.tensor(self.policies[idx], dtype=torch.float32),
                 "success": torch.tensor(self.success[idx], dtype=torch.float32)}
 

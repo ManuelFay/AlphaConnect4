@@ -37,7 +37,7 @@ args = TrainingArgs(
     train_epochs=10,
     batch_size=500,
     print_progress=True,
-    model_output_path="/home/manu/perso/RL_Connect4/model.pth"
+    model_output_path="/home/manu/perso/RL_Connect4/model2.pth"
 )
 trainer = Trainer(model=NaiveNet(ROW_COUNT, COLUMN_COUNT),
                   train_dataset=train_set,

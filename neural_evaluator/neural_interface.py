@@ -19,13 +19,15 @@ class NeuralInterface:
         Flip board so that agent is always with pieces #1
         Score is from the POV of the next to play"""
         board = node.board.copy()
-        if node.turn == 1:
-            # Would be better just to switch dimensions around when we will have 2 layers
-            board[node.board == 1] = 2
-            board[node.board == 2] = 1
+        tmp_boards = torch.tensor(board)
+        input_ = torch.zeros(2, *tmp_boards.shape, dtype=torch.float32)
+        input_[0, tmp_boards == 1] = 1
+        input_[1, tmp_boards == 2] = 1
 
-        input_ = torch.from_numpy(board).unsqueeze(0).float()
-        col_evaluation, score_evaluation = self.model(input_)
+        if node.turn == 1:
+            input_ = input_[[1, 0], :]
+
+        col_evaluation, score_evaluation = self.model(input_.unsqueeze(0))
 
         score = self.softmax(score_evaluation.squeeze())[1].item()
         policy = self.softmax(col_evaluation.squeeze()).detach().cpu().numpy()
