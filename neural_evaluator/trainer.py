@@ -38,17 +38,14 @@ class Trainer:
         self.training_args = training_args
         
         if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
+            print("Loading from pretrained model")
             self.model.load_state_dict(torch.load(self.training_args.from_pretrained))
             
         self.optimizer = Adam(self.model.parameters(), lr=0.005)
         self.loss_function = AlphaLoss(weight=1)
         self.writer = SummaryWriter()
 
-        if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
-            self.model.from_pretrained(self.training_args.from_pretrained)
-
     def train(self):
-
         self.infer(epoch=-1)
         self.model.train()
         data_loader = DataLoader(self.train_dataset, batch_size=self.training_args.batch_size, shuffle=True)
