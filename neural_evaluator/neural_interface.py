@@ -9,6 +9,7 @@ class NeuralInterface:
     def __init__(self, model_path=None):
         self.model = NaiveNet(num_rows=ROW_COUNT, num_cols=COLUMN_COUNT)
         if model_path:
+            print(f"Loading weights from {model_path}")
             self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
         self.softmax = torch.nn.Softmax(dim=0)

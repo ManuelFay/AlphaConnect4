@@ -48,13 +48,8 @@ class MCTSAgent(BaseAgent):
 
     def estimate_confidence(self, board):
         """Confidence estimation assuming optimal adversary"""
-        # self.ai_confidence = self.tree.score(self.tree.choose(board))
         optimal_board = self.tree.choose(board)
-        if not optimal_board.is_terminal():
-            # TODO: check you can use choose for adversary
-            return 1 - self.tree.score(self.tree.choose(optimal_board))
-        else:
-            return self.tree.score(optimal_board)
+        return self.tree.score(optimal_board)
 
     def move(self, board, turn):
         board = Connect4Tree(board, turn=turn)
