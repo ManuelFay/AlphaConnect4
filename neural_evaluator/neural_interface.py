@@ -12,7 +12,6 @@ class NeuralInterface:
             print(f"Loading weights from {model_path}")
             self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
-        self.softmax = torch.nn.Softmax(dim=0)
 
     def score(self, node):
         """Should include logic for who's turn it is and get based on that
@@ -29,7 +28,6 @@ class NeuralInterface:
             input_ = input_[[1, 0], :]
 
         col_evaluation, score_evaluation = self.model(input_.unsqueeze(0))
-
-        score = self.softmax(score_evaluation.squeeze())[1].item()
-        policy = self.softmax(col_evaluation.squeeze()).detach().cpu().numpy()
+        score = score_evaluation.squeeze().item()
+        policy = col_evaluation.squeeze().detach().cpu().numpy()
         return score, policy

@@ -16,10 +16,8 @@ class AlphaLoss(nn.Module):
         assert target_policies.shape[0] == target_wins.shape[0]
         assert wins.shape[0] == target_wins.shape[0]
 
-        reg_wins = self.softmax(wins)[:, 1]
-        reg_policies = self.softmax(policies)
-        mse = self.mse_loss(reg_wins, target_wins)
-        kl = self.kl_loss(torch.log(reg_policies + self.eps), target_policies)
+        mse = self.mse_loss(wins, target_wins)
+        kl = self.kl_loss(torch.log(policies + self.eps), target_policies)
 
         loss = mse + self.weight * kl
         return loss

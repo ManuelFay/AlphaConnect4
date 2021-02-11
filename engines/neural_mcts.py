@@ -25,6 +25,7 @@ class NeuralMCTS(MCTS):
             score, policy = self.neural_interface.score(leaf)
             # TODO: Why is it reversed ?? - does not work otherwise
             reward = 1 - score
+            # reward = (1 - score) if leaf.turn == node.turn else score
 
             for child in self.children[leaf]:
                 self.p_value[child] = policy[child.last_move]
