@@ -24,21 +24,22 @@ def normalize_policies(boards, policies):
     return np.array(new_pols)
 
 
-data = np.load("../training_0.npy", allow_pickle=True)
-print(f"Number of training samples: {data.shape[1]}")
+data_train = np.load("../training_1.npy", allow_pickle=True)
+data_test = np.load("../training.npy", allow_pickle=True)
+print(f"Number of training samples: {data_train.shape[1]}")
 
-new_policies = normalize_policies(data[0], data[1])
+new_policies = normalize_policies(data_train[0], data_train[1])
 
-train_set = Connect4Dataset(data[0], new_policies, data[2], training=True)
-test_set = Connect4Dataset(data[0], new_policies, data[2], training=False)
+train_set = Connect4Dataset(data_train[0], new_policies, data_train[2], training=True)
+test_set = Connect4Dataset(data_test[0], normalize_policies(data_test[0], data_test[1]), data_test[2], training=False)
 
 
 args = TrainingArgs(
-    train_epochs=10,
+    train_epochs=5,
     batch_size=500,
     print_progress=True,
-    from_pretrained=None,
-    model_output_path="/home/manu/perso/RL_Connect4/model_0b.pth"
+    from_pretrained="/home/manu/perso/RL_Connect4/model_0b.pth",
+    model_output_path="/home/manu/perso/RL_Connect4/model_0c.pth"
 )
 trainer = Trainer(model=NaiveNet(ROW_COUNT, COLUMN_COUNT),
                   train_dataset=train_set,

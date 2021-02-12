@@ -66,10 +66,12 @@ class Trainer:
 
                 # Get the Python number from a 1-element Tensor by calling tensor.item()
                 total_loss += loss.item()
+
+            total_loss = total_loss/len(data_loader)
             self.writer.add_scalar("Loss/train", total_loss, epoch)
-            # self.infer(epoch=epoch)
             if self.training_args.print_progress:
                 print(f"\n Loss/train: {total_loss} - {epoch}")
+            self.infer(epoch=epoch)
 
         if self.training_args.model_output_path:
             torch.save(self.model.state_dict(), self.training_args.model_output_path)
@@ -90,6 +92,7 @@ class Trainer:
                 output_pol, output_pos = self.model(boards)
                 total_loss += self.loss_function(output_pol, output_pos, policies, wins).item()
 
+        total_loss = total_loss / len(data_loader)
         self.model.train()
 
         if epoch is not None:
