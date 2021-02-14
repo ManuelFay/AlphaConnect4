@@ -33,8 +33,8 @@ class MCTS:
 
     def choose_(self, node):
         """Choose the best successor of node. (Choose a move in the game)"""
-        if node.is_terminal():
-            raise RuntimeError(f"choose called on terminal node {node}")
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
             return node.find_random_child()
@@ -47,8 +47,8 @@ class MCTS:
     def choose(self, node):
         """Choose the best successor of node. (Choose a move in the game)
         Modified"""
-        if node.is_terminal():
-            raise RuntimeError(f"choose called on terminal node {node}")
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
             return node.find_random_child()
@@ -58,8 +58,8 @@ class MCTS:
     def choose_stochastic(self, node, temperature: float = 0.5):
         """Sample from the policy instead of choosing the max (to generate training samples)
         Temperature controls the degree of exploration and could be adjusted throughout the game"""
-        if node.is_terminal():
-            raise RuntimeError(f"choose called on terminal node {node}")
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
             return node.find_random_child()     # find_heuristic_child()
@@ -82,12 +82,13 @@ class MCTS:
     def _select(self, node):
         "Find an unexplored descendent of `node`"
         path = []
+        keys = set(self.children.keys())
         while True:
             path.append(node)
-            if node not in self.children or not self.children[node]:
+            if node not in keys or not self.children[node]:
                 # node is either unexplored or terminal
                 return path
-            unexplored = self.children[node] - self.children.keys()
+            unexplored = self.children[node] - keys
             if unexplored:
                 n = unexplored.pop()
                 path.append(n)

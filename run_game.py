@@ -7,11 +7,11 @@ from engines.minimax_agent import MinimaxAgent
 
 # Setup players (None is a human player, MCTSAgent, MinimaxAgent)
 
-agent0 = None
+# agent0 = None
 # agent0 = MinimaxAgent(max_depth=5, is_agent1=False)
-# agent0 = MCTSAgent(simulation_time=3)
+agent0 = MCTSAgent(simulation_time=3)
 
-agent1 = NeuralMCTSAgent(simulation_time=0.5, show_pbar=True, model_path="/home/manu/perso/RL_Connect4/model_0b.pth")
+agent1 = NeuralMCTSAgent(simulation_time=5, show_pbar=True, model_path="/home/manu/perso/RL_Connect4/model_0.pth")
 # agent1 = MCTSAgent(simulation_time=3, tree_path=None)
 # agent1 = MinimaxAgent(max_depth=5, is_agent1=True)
 

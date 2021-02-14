@@ -44,18 +44,21 @@ class Connect4Tree(Board, Node):
         return self.create_child(row, col)
 
     def reward(self):
-        if not self.is_terminal():
-            raise RuntimeError(f"reward called on non-terminal board {self}")
+        # Remove failsafes
+        # if not self.is_terminal():
+        #     raise RuntimeError(f"reward called on non-terminal board {self}")
+        #
+        # if (self.winning_move(piece=2) and (self.turn == 1)) or (self.winning_move(piece=1) and (self.turn == 0)):
+        #     # It's your turn and you've already won. Should be impossible.
+        #     raise RuntimeError(f"reward called on unreachable board {self}")
+        # if (self.winning_move(piece=1) and (self.turn == 1)) or (self.winning_move(piece=2) and (self.turn == 0)):
+        #     return 0  # Your opponent has just won. Bad.
+        # if len(self.get_valid_locations()) == 0:
+        #     return 0.5  # Board is a tie
+        # # The winner is neither True, False, nor None
+        # raise RuntimeError("board has unknown winner type")
 
-        if (self.winning_move(piece=2) and (self.turn == 1)) or (self.winning_move(piece=1) and (self.turn == 0)):
-            # It's your turn and you've already won. Should be impossible.
-            raise RuntimeError(f"reward called on unreachable board {self}")
-        if (self.winning_move(piece=1) and (self.turn == 1)) or (self.winning_move(piece=2) and (self.turn == 0)):
-            return 0  # Your opponent has just won. Bad.
-        if len(self.get_valid_locations()) == 0:
-            return 0.5  # Board is a tie
-        # The winner is neither True, False, nor None
-        raise RuntimeError("board has unknown winner type")
+        return 0.5 if len(self.get_valid_locations()) == 0 else 0
 
     def __hash__(self):
         return self.id
