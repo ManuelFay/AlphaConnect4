@@ -35,7 +35,7 @@ class NeuralMCTS(MCTS):
         "Select a child of node, balancing exploration & exploitation"
 
         # All children of node should already be expanded:
-        assert all(n in self.children for n in self.children[node])
+        # assert all(n in self.children for n in self.children[node])
 
         vertex_count = math.sqrt(self.visit_count[node])
 

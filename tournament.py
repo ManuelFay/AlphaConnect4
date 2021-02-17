@@ -29,11 +29,11 @@ def instanciator(player: Player):
         return MinimaxAgent(max_depth=int(player.time))
 
 
-contestants = [# Player("p1", "mcts", time=3),
+contestants = [Player("p1", "mcts", time=3),
                Player("p2", "neural_mcts", time=3, pretrained_path="/home/manu/perso/RL_Connect4/model_0.pth"),
                # Player("p3", "minimax", time=5),
-               Player("p4", "neural_mcts", time=3),
-               Player("p5", "neural_mcts", time=3,  pretrained_path="/home/manu/perso/RL_Connect4/model_1.pth")
+               # Player("p4", "neural_mcts", time=3),
+               # Player("p5", "neural_mcts", time=3,  pretrained_path="/home/manu/perso/RL_Connect4/model_1.pth")
                ]
 wins = {p.name: 0 for p in contestants}
 

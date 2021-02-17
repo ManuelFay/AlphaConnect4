@@ -1,6 +1,6 @@
 import os
 import time
-import pickle
+from typing import Optional
 from tqdm import tqdm
 
 import numpy as np
@@ -12,22 +12,15 @@ from engines.mcts_interface import Connect4Tree
 class MCTSAgent(BaseAgent):
     def __init__(self,
                  simulation_time: float = 3.,
-                 tree_path: str = None,
-                 is_training: bool = False,
+                 training_path: Optional[str] = None,
                  show_pbar: bool = False):
         """is_training: weakens the agent to get more diverse training samples"""
         super().__init__()
         self.simulation_time = simulation_time
-        self.tree_path = tree_path
         self.tree = MCTS()
-        self.is_training = is_training
-        self.show_pbar = show_pbar and (not is_training)
-        self.training_path = "training.npy"
-
-        if tree_path and os.path.isfile(tree_path):
-            # Load precomputed MC Tree
-            with open(tree_path, "rb") as file:
-                self.tree = pickle.load(file)
+        self.training_path = training_path
+        self.is_training = training_path is not None
+        self.show_pbar = show_pbar and (not self.is_training)
 
         if self.is_training:
             self.boards = []
@@ -39,7 +32,6 @@ class MCTSAgent(BaseAgent):
 
         # Flip board so that agent always has pieces #1
         if board.turn == 1:
-            # Would be better just to switch dimensions around when we will have 2 layers
             board_[board.board == 1] = 2
             board_[board.board == 2] = 1
 
@@ -74,19 +66,11 @@ class MCTSAgent(BaseAgent):
         else:
             optimal_board = self.tree.choose(board)
 
-        col = optimal_board.last_move
         self.ai_confidence = self.estimate_confidence(board)
-        return col
-
-    def save_tree(self):
-        # Save new tree exploration info
-        if self.tree_path and os.path.isfile(self.tree_path):
-            with open(self.tree_path, "wb") as file:
-                pickle.dump(self.tree, file)
+        return optimal_board.last_move
 
     def kill_agent(self, result: float):
         """Store learning samples"""
-        self.save_tree()
         if self.is_training:
             training_samples = np.array([self.boards, self.policies, [result]*len(self.boards)], dtype=object)
 
@@ -96,5 +80,4 @@ class MCTSAgent(BaseAgent):
             else:
                 train_ = training_samples
 
-            # print(f"{train_.shape[1]} total training samples")
-            np.save("training.npy", train_)
+            np.save(self.training_path, train_)

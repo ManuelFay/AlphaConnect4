@@ -1,12 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional
 from tqdm import tqdm
-import logging
 import os
 
-import numpy as np
 import torch
-
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torch.optim.adam import Adam
@@ -20,6 +17,7 @@ class TrainingArgs:
     train_epochs: int = 3
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     batch_size: int = 50
+    lr: float = 0.005
     print_progress: bool = False
     model_output_path: Optional[str] = None
     from_pretrained: Optional[str] = None
@@ -38,10 +36,10 @@ class Trainer:
         self.training_args = training_args
         
         if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
-            print("Loading from pretrained model")
+            print(f"Loading from pretrained model {self.training_args.from_pretrained}")
             self.model.load_state_dict(torch.load(self.training_args.from_pretrained))
             
-        self.optimizer = Adam(self.model.parameters(), lr=0.005)
+        self.optimizer = Adam(self.model.parameters(), lr=self.training_args.lr)
         self.loss_function = AlphaLoss(weight=1)
         self.writer = SummaryWriter()
 
@@ -64,7 +62,6 @@ class Trainer:
                 loss.backward()
                 self.optimizer.step()
 
-                # Get the Python number from a 1-element Tensor by calling tensor.item()
                 total_loss += loss.item()
 
             total_loss = total_loss/len(data_loader)

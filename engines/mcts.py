@@ -26,8 +26,6 @@ class MCTS:
         return self.q_value[n] / self.visit_count[n]  # average reward
 
     def get_policy(self, node):
-        # TODO: check which version is most efficient
-        # return [self.q_value[n]/self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)]
         visit_count = max(1, self.visit_count[node] - 1)
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
@@ -39,9 +37,6 @@ class MCTS:
         if node not in self.children:
             return node.find_random_child()
 
-        # print("\nConfidence per column: ")
-        # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
-        # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
         return max(self.children[node], key=self.score)
 
     def choose(self, node):
@@ -66,7 +61,7 @@ class MCTS:
 
         # Sample from the policy instead of choosing the max (to generate training samples)
         childs = list(self.children[node])
-        # visit_count = self.visit_count[node]
+
         visit_count = np.sum([self.visit_count[n]**(1/temperature) for n in childs])
         weights = [(self.visit_count[n]**(1/temperature))/visit_count for n in childs]
         return random.choices(childs, weights=weights).pop()
@@ -123,7 +118,7 @@ class MCTS:
         "Select a child of node, balancing exploration & exploitation"
 
         # All children of node should already be expanded:
-        assert all(n in self.children for n in self.children[node])
+        # assert all(n in self.children for n in self.children[node])
 
         log_n_vertex = math.log(self.visit_count[node])
 

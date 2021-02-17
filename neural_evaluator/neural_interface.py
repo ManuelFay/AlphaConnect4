@@ -1,6 +1,5 @@
 import torch
 
-from neural_evaluator.stub_nn import StubNet
 from neural_evaluator.naive_nn import NaiveNet
 from gameplay.constants import ROW_COUNT, COLUMN_COUNT
 
@@ -9,14 +8,12 @@ class NeuralInterface:
     def __init__(self, model_path=None):
         self.model = NaiveNet(num_rows=ROW_COUNT, num_cols=COLUMN_COUNT)
         if model_path:
-            print(f"Loading weights from {model_path}")
+            # print(f"Loading weights from {model_path}")
             self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
 
     def score(self, node):
-        """Should include logic for who's turn it is and get based on that
-        Board should be one-hot encoded / categorical
-        Flip board so that agent is always with pieces #1
+        """Flip board so that agent is always with pieces #1
         Score is from the POV of the next to play"""
         board = node.board.copy()
         tmp_boards = torch.tensor(board)

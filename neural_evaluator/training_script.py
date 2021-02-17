@@ -1,7 +1,6 @@
 import numpy as np
 
 from neural_evaluator.dataset import Connect4Dataset
-from neural_evaluator.stub_nn import StubNet
 from neural_evaluator.naive_nn import NaiveNet
 from neural_evaluator.trainer import Trainer, TrainingArgs
 
