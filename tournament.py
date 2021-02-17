@@ -35,6 +35,7 @@ contestants = [# Player("p1", "mcts", time=3),
                Player("p4", "neural_mcts", time=3),
                Player("p5", "neural_mcts", time=3,  pretrained_path="/home/manu/perso/RL_Connect4/model_1.pth")
                ]
+wins = {p.name: 0 for p in contestants}
 
 for _ in range(100):
     players = sample(contestants, k=2)
@@ -42,8 +43,12 @@ for _ in range(100):
     game = Game(agent0=instanciator(players[0]), agent1=instanciator(players[1]), enable_ui=False)
     result = game.play()
     print(f"{players[result].name if result != 0.5 else 'Draw - No one'} wins")
+    wins[players[0].name] += 1 - result
+    wins[players[1].name] += result
     updated_ratings = eloRating(players[0].rating, players[1].rating, result)
     players[0].rating = updated_ratings[0]
     players[1].rating = updated_ratings[1]
 
-    print([(player.name, player.rating) for player in contestants])
+    print(wins)
+
+print([(player.name, player.rating) for player in contestants])

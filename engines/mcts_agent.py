@@ -89,7 +89,6 @@ class MCTSAgent(BaseAgent):
         self.save_tree()
         if self.is_training:
             training_samples = np.array([self.boards, self.policies, [result]*len(self.boards)], dtype=object)
-            # Should be in append mode
 
             if os.path.isfile(self.training_path):
                 train_ = np.load(self.training_path, allow_pickle=True)
