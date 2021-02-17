@@ -8,7 +8,7 @@ from engines.mcts_agent import MCTSAgent
 from engines.neural_mcts_agent import NeuralMCTSAgent
 from engines.minimax_agent import MinimaxAgent
 
-from elo.elo_rating import eloRating
+from elo.elo_rating import elo_rating
 
 
 @dataclass
@@ -23,10 +23,11 @@ class Player:
 def instanciator(player: Player):
     if player.type == "mcts":
         return MCTSAgent(simulation_time=player.time)
-    elif player.type == "neural_mcts":
+    if player.type == "neural_mcts":
         return NeuralMCTSAgent(simulation_time=player.time, model_path=player.pretrained_path)
-    elif player.type == "minimax":
+    if player.type == "minimax":
         return MinimaxAgent(max_depth=int(player.time))
+    raise ValueError
 
 
 contestants = [Player("p1", "mcts", time=3),
@@ -42,13 +43,15 @@ for _ in range(100):
     print(f"Game between {players[0].name} and {players[1].name}")
     game = Game(agent0=instanciator(players[0]), agent1=instanciator(players[1]), enable_ui=False)
     result = game.play()
+
     print(f"{players[result].name if result != 0.5 else 'Draw - No one'} wins")
+
     wins[players[0].name] += 1 - result
     wins[players[1].name] += result
-    updated_ratings = eloRating(players[0].rating, players[1].rating, result)
+    print(wins)
+
+    updated_ratings = elo_rating(players[0].rating, players[1].rating, result)
     players[0].rating = updated_ratings[0]
     players[1].rating = updated_ratings[1]
-
-    print(wins)
 
 print([(player.name, player.rating) for player in contestants])

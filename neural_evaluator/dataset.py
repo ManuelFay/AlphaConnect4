@@ -1,5 +1,6 @@
-import torch
+# pylint: disable=not-callable, no-member, no-name-in-module
 import random
+import torch
 
 
 class Connect4Dataset(torch.utils.data.Dataset):

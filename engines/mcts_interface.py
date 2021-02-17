@@ -7,8 +7,8 @@ from gameplay.board import Board
 
 class Connect4Tree(Board, Node):
     def __init__(self, board, turn):
-        self.id = None
-        super(Connect4Tree, self).__init__(board, turn)
+        self.id_ = None
+        super().__init__(board, turn)
         self.update_id()
 
     def create_child(self, row, col):
@@ -18,7 +18,7 @@ class Connect4Tree(Board, Node):
         return child
 
     def update_id(self):
-        self.id = hash(self.board.tostring())
+        self.id_ = hash(self.board.tostring())
 
     def is_terminal(self):
         return self.winning_move(PLAYER_PIECE) or self.winning_move(AI_PIECE) or len(self.get_valid_locations()) == 0
@@ -61,7 +61,7 @@ class Connect4Tree(Board, Node):
         return 0.5 if len(self.get_valid_locations()) == 0 else 0
 
     def __hash__(self):
-        return self.id
+        return self.id_
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()

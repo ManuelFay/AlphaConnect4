@@ -9,7 +9,7 @@ def probability(rating1, rating2):
 # K is a sensitivity constant.
 # d determines whether
 # Player A wins or Player B.
-def eloRating(rating_a, rating_b, outcome, k=40):
+def elo_rating(rating_a, rating_b, outcome, k=40):
     # To calculate the Winning
     # probability of Player B
     prob_b = probability(rating_a, rating_b)

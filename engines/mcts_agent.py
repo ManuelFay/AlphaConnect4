@@ -1,3 +1,5 @@
+# pylint: disable=too-many-instance-attributes
+
 import os
 import time
 from typing import Optional

@@ -1,7 +1,9 @@
+# pylint: disable=not-callable, no-member, no-name-in-module
 from dataclasses import dataclass
 from typing import Optional
-from tqdm import tqdm
 import os
+
+from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader
@@ -17,7 +19,7 @@ class TrainingArgs:
     train_epochs: int = 3
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     batch_size: int = 50
-    lr: float = 0.005
+    learning_rate: float = 0.005
     print_progress: bool = False
     model_output_path: Optional[str] = None
     from_pretrained: Optional[str] = None
@@ -34,12 +36,12 @@ class Trainer:
         self.train_dataset = train_dataset
         self.test_dataset = test_dataset
         self.training_args = training_args
-        
+
         if self.training_args.from_pretrained and os.path.isfile(self.training_args.from_pretrained):
             print(f"Loading from pretrained model {self.training_args.from_pretrained}")
             self.model.load_state_dict(torch.load(self.training_args.from_pretrained))
-            
-        self.optimizer = Adam(self.model.parameters(), lr=self.training_args.lr)
+
+        self.optimizer = Adam(self.model.parameters(), lr=self.training_args.learning_rate)
         self.loss_function = AlphaLoss(weight=1)
         self.writer = SummaryWriter()
 
@@ -73,7 +75,7 @@ class Trainer:
         if self.training_args.model_output_path:
             torch.save(self.model.state_dict(), self.training_args.model_output_path)
 
-    def infer(self, test_dataset=None, epoch=None, return_acc: bool = False):
+    def infer(self, test_dataset=None, epoch=None):
         self.model.eval()
         data_loader = DataLoader(test_dataset if test_dataset else self.test_dataset,
                                  batch_size=self.training_args.batch_size,

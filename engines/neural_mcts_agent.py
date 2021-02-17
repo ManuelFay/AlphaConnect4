@@ -6,7 +6,7 @@ from engines.neural_mcts import NeuralMCTS
 class NeuralMCTSAgent(MCTSAgent):
     def __init__(self,
                  simulation_time: float = 3.,
-                 training_path: bool = None,
+                 training_path: Optional[str] = None,
                  show_pbar: bool = False,
                  model_path: Optional[str] = None):
         super().__init__(simulation_time, training_path, show_pbar)

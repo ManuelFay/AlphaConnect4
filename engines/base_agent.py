@@ -5,6 +5,6 @@ class BaseAgent:
     def move(self, board, turn) -> int:
         raise NotImplementedError
 
-    def kill_agent(self, result):
+    def kill_agent(self, _):
         """Results: 1 - Win, 0.5 - Tie, 0 - Loss"""
-        pass
+        return

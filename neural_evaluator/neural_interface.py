@@ -1,3 +1,5 @@
+# pylint: disable=not-callable, no-member, no-name-in-module
+
 import torch
 
 from neural_evaluator.naive_nn import NaiveNet
