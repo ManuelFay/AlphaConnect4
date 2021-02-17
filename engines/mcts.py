@@ -4,9 +4,11 @@ Luke Harold Miles, July 2019, Public Domain Dedication
 See also https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
 https://gist.github.com/qpwo/c538c6f73727e254fdc7fab81024f6e1
 """
+import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
+import numpy as np
 
 
 class MCTS:
@@ -23,18 +25,47 @@ class MCTS:
             return float("-inf")  # avoid unseen moves
         return self.q_value[n] / self.visit_count[n]  # average reward
 
+    def get_policy(self, node):
+        visit_count = max(1, self.visit_count[node] - 1)
+        return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
+
+    def choose_deprecated(self, node):
+        """ Deprecated version of choose - Used for debugging
+        Choose the best successor of node. (Choose a move in the game)"""
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
+
+        if node not in self.children:
+            return node.find_random_child()
+
+        return max(self.children[node], key=self.score)
+
     def choose(self, node):
-        """Choose the best successor of node. (Choose a move in the game)"""
-        if node.is_terminal():
-            raise RuntimeError(f"choose called on terminal node {node}")
+        """Choose the best successor of node. (Choose a move in the game)
+        Modified"""
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
+
+        if node not in self.children:
+            return node.find_random_child()
+
+        return max(self.children[node], key=lambda x: self.visit_count[x])
+
+    def choose_stochastic(self, node, temperature: float = 0.5):
+        """Sample from the policy instead of choosing the max (to generate training samples)
+        Temperature controls the degree of exploration and could be adjusted throughout the game"""
+        # if node.is_terminal():
+        #     raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
             return node.find_random_child()     # find_heuristic_child()
 
-        # print("\nConfidence per column: ")
-        # print([round(self.score(n), 2) for n in sorted(self.children[node], key=lambda x: x.last_move)])
-        # print([self.visit_count[n] for n in sorted(self.children[node], key=lambda x: x.last_move)])
-        return max(self.children[node], key=self.score)
+        # Sample from the policy instead of choosing the max (to generate training samples)
+        childs = list(self.children[node])
+
+        visit_count = np.sum([self.visit_count[n]**(1/temperature) for n in childs])
+        weights = [(self.visit_count[n]**(1/temperature))/visit_count for n in childs]
+        return random.choices(childs, weights=weights).pop()
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)"""
@@ -47,12 +78,13 @@ class MCTS:
     def _select(self, node):
         "Find an unexplored descendent of `node`"
         path = []
+        keys = set(self.children.keys())
         while True:
             path.append(node)
-            if node not in self.children or not self.children[node]:
+            if node not in keys or not self.children[node]:
                 # node is either unexplored or terminal
                 return path
-            unexplored = self.children[node] - self.children.keys()
+            unexplored = self.children[node] - keys
             if unexplored:
                 n = unexplored.pop()
                 path.append(n)
@@ -87,7 +119,7 @@ class MCTS:
         "Select a child of node, balancing exploration & exploitation"
 
         # All children of node should already be expanded:
-        assert all(n in self.children for n in self.children[node])
+        # assert all(n in self.children for n in self.children[node])
 
         log_n_vertex = math.log(self.visit_count[node])
 

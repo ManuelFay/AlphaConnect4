@@ -3,3 +3,7 @@ venv
 __pycache__
 *.pyc
 *.pickle
+*.npy
+/runs
+events*
+*.pth

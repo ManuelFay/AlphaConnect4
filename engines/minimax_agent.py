@@ -19,5 +19,5 @@ class MinimaxAgent(BaseAgent):
     def move(self, board, turn):
         col, score = MinimaxEngine(board, turn=turn).minimax(self.max_depth, -math.inf, math.inf, self.is_agent1)
         self.ai_confidence = (sigmoid(score)/2) + 0.5
-        print(score, self.ai_confidence)
+        # print(score, self.ai_confidence)
         return col
