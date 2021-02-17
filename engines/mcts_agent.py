@@ -63,7 +63,7 @@ class MCTSAgent(BaseAgent):
         if self.is_training:
             self.save_state(board)
 
-        if (board.move_number < 10) and self.is_training:
+        if (board.board != 0).sum() < 10 and self.is_training:
             optimal_board = self.tree.choose_stochastic(board, temperature=0.3)
         else:
             optimal_board = self.tree.choose(board)

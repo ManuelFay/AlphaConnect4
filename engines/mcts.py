@@ -29,8 +29,9 @@ class MCTS:
         visit_count = max(1, self.visit_count[node] - 1)
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
-    def choose_(self, node):
-        """Choose the best successor of node. (Choose a move in the game)"""
+    def choose_deprecated(self, node):
+        """ Deprecated version of choose - Used for debugging
+        Choose the best successor of node. (Choose a move in the game)"""
         # if node.is_terminal():
         #     raise RuntimeError(f"choose called on terminal node {node}")
 
