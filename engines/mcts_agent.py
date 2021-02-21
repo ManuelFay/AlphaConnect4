@@ -59,6 +59,7 @@ class MCTSAgent(BaseAgent):
             #     self.visual_engine.draw_board(board, self.ai_confidence)
             if self.show_pbar:
                 pbar.update()
+        self.tree.unexplored_backlog = []
 
         if self.is_training:
             self.save_state(board)
