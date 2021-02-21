@@ -51,7 +51,7 @@ choose moves that are not always optimal but rather sampled from the estimated p
 the first 10 moves. This allows to generate a greater diversity of games and help the neural evaluator learn general 
 patterns.
 
-Once enough positions have been generated (up to you, I use 50k), use `neural_evaluator/training_script.py` to train a 
+Once enough positions have been generated (up to you, I use 20k+), use `neural_evaluator/training_script.py` to train a 
 new model to better evaluate position value and optimal policy. You can modify the model structure by replacing the 
 NaiveNet or playing with the loss function parameters. It is then possible to play against the new version of the model
 by specifying the new weight paths in ```run_game.py```. 
@@ -61,5 +61,33 @@ Use the `tournament.py` to pit agents against each other. If the newer neural ag
 serveral generations. 
 
 Note: The tournament mode and the sample generation process can be run in parallel from multiple terminals.
+
+### Results
+
+100 round matchups are simulated between agents (0 for a loss, 1 for a win, 0.5 for a tie), with equal odds
+of starting.
+
+| Matchup | Time Control | Result |
+|------|----------|---------|
+|MCTS vs Minimax | 0.5 sec / depth 4 | 58 - 42 |
+|Neural Gen 0 vs MCTS | 0.5 sec | 81.5 - 18.5 |
+|Neural Gen 1 vs Minimax | 0.5 sec / depth 4 | 64 - 36 |
+|Neural Gen 1 vs MCTS | 0.5 sec | 70 - 30 |
+|Neural Gen 0 vs Neural Gen 1 | 0.5 sec | 41 - 59 |
+|Neural Gen 1 vs Neural Gen 2 | 0.5 sec | 49.5 - 50.5 |
+
+### Comments
+
+To gain time, the first generation of neural agent (Gen 0) is trained with 50k samples generated from the MCTS agent, rather 
+than from a neural network with random weights.
+
+Neural agents gain better positional awareness than their MCTS or Minimax counterpart,
+but some generations are susceptible to defend poorly against some
+tricky patterns in the opening stage in low time control settings. To prevent this, it is useful to add training samples 
+that result from play against older versions of the neural agents or the MCTS agent. 
+
+It might be interesting to modify the loss function to penalize losses in few moves. We could also think of
+weighting the MSELoss that corresponds to the win prediction more towards the end of the game and less at the
+beginning.
 
 Enjoy ! PRs welcomed ! 

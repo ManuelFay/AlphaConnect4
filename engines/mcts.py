@@ -20,6 +20,8 @@ class MCTS:
         self.children = dict()  # children of each node
         self.exploration_weight = exploration_weight
 
+        self.unexplored_backlog = []
+
     def score(self, n):
         if self.visit_count[n] == 0:
             return float("-inf")  # avoid unseen moves
@@ -77,18 +79,26 @@ class MCTS:
 
     def _select(self, node):
         "Find an unexplored descendent of `node`"
+
         path = []
         keys = set(self.children.keys())
         while True:
+            if self.unexplored_backlog:
+                return self.unexplored_backlog.pop()
+
             path.append(node)
             if node not in keys or not self.children[node]:
                 # node is either unexplored or terminal
                 return path
             unexplored = self.children[node] - keys
+
             if unexplored:
-                n = unexplored.pop()
-                path.append(n)
-                return path
+                for n in unexplored:
+                    new_path = path.copy()
+                    new_path.append(n)
+                    self.unexplored_backlog.append(new_path)
+                continue
+
             node = self._uct_select(node)  # descend a layer deeper
 
     def _expand(self, node):
