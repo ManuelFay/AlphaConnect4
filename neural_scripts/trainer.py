@@ -7,11 +7,10 @@ from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
 from torch.optim.adam import Adam
 
-from neural_evaluator.dataset import Connect4Dataset
-from neural_evaluator.custom_loss import AlphaLoss
+from neural_scripts.dataset import Connect4Dataset
+from neural_scripts.custom_loss import AlphaLoss
 
 
 @dataclass
@@ -43,7 +42,6 @@ class Trainer:
 
         self.optimizer = Adam(self.model.parameters(), lr=self.training_args.learning_rate)
         self.loss_function = AlphaLoss(weight=1)
-        self.writer = SummaryWriter()
 
     def train(self):
         self.infer(epoch=-1)
@@ -67,7 +65,6 @@ class Trainer:
                 total_loss += loss.item()
 
             total_loss = total_loss/len(data_loader)
-            self.writer.add_scalar("Loss/train", total_loss, epoch)
             if self.training_args.print_progress:
                 print(f"\n Loss/train: {total_loss} - {epoch}")
             self.infer(epoch=epoch)
@@ -94,7 +91,5 @@ class Trainer:
         total_loss = total_loss / len(data_loader)
         self.model.train()
 
-        if epoch is not None:
-            self.writer.add_scalar("Loss/test", total_loss, epoch)
         if self.training_args.print_progress:
             print(f"\n Loss/test: {total_loss} - {epoch}")

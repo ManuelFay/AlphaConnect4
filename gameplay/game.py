@@ -5,11 +5,11 @@ import random
 
 import pygame
 
-from gameplay.board import Board
-from gameplay.visual_engine import VisualEngine
-from gameplay.constants import YELLOW, RED, BLUE, SQUARESIZE, RADIUS, BLACK
+from alphaconnect4.interfaces.board import Board
+from alphaconnect4.constants.constants import YELLOW, RED, BLUE, SQUARESIZE, RADIUS, BLACK
+from alphaconnect4.agents.base_agent import BaseAgent
 
-from engines.base_agent import BaseAgent
+from gameplay.visual_engine import VisualEngine
 
 
 class Game:
