@@ -8,8 +8,6 @@ from engines.mcts_agent import MCTSAgent
 from engines.neural_mcts_agent import NeuralMCTSAgent
 from engines.minimax_agent import MinimaxAgent
 
-from elo.elo_rating import elo_rating
-
 
 @dataclass
 class Player:
@@ -49,9 +47,5 @@ for _ in range(100):
     wins[players[0].name] += 1 - result
     wins[players[1].name] += result
     print(wins)
-
-    updated_ratings = elo_rating(players[0].rating, players[1].rating, result)
-    players[0].rating = updated_ratings[0]
-    players[1].rating = updated_ratings[1]
 
 print([(player.name, player.rating) for player in contestants])
