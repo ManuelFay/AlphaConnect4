@@ -53,10 +53,6 @@ class MCTSAgent(BaseAgent):
             pbar = tqdm()
         while time.time() < timeout_start + self.simulation_time:
             self.tree.do_rollout(board)
-            # TODO Async if we want dynamic confidence updates
-            # if self.tree.visit_count[board] > 200 and self.tree.visit_count[board] % 10 == 0:
-            #     self.ai_confidence = self.estimate_confidence(board)
-            #     self.visual_engine.draw_board(board, self.ai_confidence)
             if self.show_pbar:
                 pbar.update()
         self.tree.unexplored_backlog = []
