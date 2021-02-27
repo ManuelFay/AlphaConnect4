@@ -1,8 +1,8 @@
 import math
 import numpy as np
 
-from engines.base_agent import BaseAgent
-from engines.minimax_engine import MinimaxEngine
+from alphaconnect4.agents.base_agent import BaseAgent
+from alphaconnect4.engines.minimax_engine import MinimaxEngine
 
 
 def sigmoid(x):

@@ -1,6 +1,7 @@
 from typing import Optional
-from engines.mcts_agent import MCTSAgent
-from engines.neural_mcts import NeuralMCTS
+
+from alphaconnect4.agents.mcts_agent import MCTSAgent
+from alphaconnect4.engines.neural_mcts import NeuralMCTS
 
 
 class NeuralMCTSAgent(MCTSAgent):

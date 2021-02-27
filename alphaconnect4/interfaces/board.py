@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import convolve2d
 
-from gameplay.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class Board:

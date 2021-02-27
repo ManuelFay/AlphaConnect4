@@ -4,9 +4,9 @@ from random import sample
 
 from gameplay.game import Game
 
-from engines.mcts_agent import MCTSAgent
-from engines.neural_mcts_agent import NeuralMCTSAgent
-from engines.minimax_agent import MinimaxAgent
+from alphaconnect4.agents.mcts_agent import MCTSAgent
+from alphaconnect4.agents.neural_mcts_agent import NeuralMCTSAgent
+from alphaconnect4.agents.minimax_agent import MinimaxAgent
 
 
 @dataclass
@@ -28,11 +28,11 @@ def instanciator(player: Player):
     raise ValueError
 
 
-contestants = [# Player("p1", "mcts", time=0.5),
-               Player("p2", "neural_mcts", time=0.5, pretrained_path="/home/manu/perso/RL_Connect4/model_0.pth"),
+contestants = [Player("p1", "mcts", time=0.5),
+               # Player("p2", "neural_mcts", time=0.5, pretrained_path="./models/model_0.pth"),
                # Player("p3", "minimax", time=4),
                # Player("p4", "neural_mcts", time=3),
-               Player("p5", "neural_mcts", time=0.5,  pretrained_path="/home/manu/perso/RL_Connect4/model_2.pth")
+               Player("p5", "neural_mcts", time=0.5, pretrained_path="./models/model_2.pth")
                ]
 wins = {p.name: 0 for p in contestants}
 

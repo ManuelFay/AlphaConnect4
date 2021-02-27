@@ -1,8 +1,8 @@
 from collections import defaultdict
 import math
 
-from engines.mcts import MCTS
-from neural_evaluator.neural_interface import NeuralInterface
+from alphaconnect4.engines.mcts import MCTS
+from alphaconnect4.interfaces.neural_interface import NeuralInterface
 
 
 class NeuralMCTS(MCTS):
@@ -31,7 +31,6 @@ class NeuralMCTS(MCTS):
         self._backpropagate(path, reward)
 
     def _uct_select(self, node):
-        # TODO: check if exploration needs to be more balanced now that we add a factor to it
         "Select a child of node, balancing exploration & exploitation"
 
         # All children of node should already be expanded:

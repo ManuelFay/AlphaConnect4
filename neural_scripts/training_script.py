@@ -1,10 +1,10 @@
 import numpy as np
 
-from neural_evaluator.dataset import Connect4Dataset
-from neural_evaluator.naive_nn import NaiveNet
-from neural_evaluator.trainer import Trainer, TrainingArgs
+from neural_scripts.dataset import Connect4Dataset
+from alphaconnect4.interfaces.naive_nn import NaiveNet
+from neural_scripts.trainer import Trainer, TrainingArgs
 
-from gameplay.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
 
 
 def detect_full_cols(board):
@@ -23,8 +23,8 @@ def normalize_policies(boards, policies):
     return np.array(new_pols)
 
 
-data_train = np.load("../training_2.npy", allow_pickle=True)
-data_test = np.load("../training_1.npy", allow_pickle=True)
+data_train = np.load("../data/training_2.npy", allow_pickle=True)
+data_test = np.load("../data/training_1.npy", allow_pickle=True)
 print(f"Number of samples: {data_train.shape[1]} / {data_test.shape[1]}")
 
 new_policies = normalize_policies(data_train[0], data_train[1])
@@ -37,8 +37,8 @@ args = TrainingArgs(
     train_epochs=8,
     batch_size=500,
     print_progress=True,
-    # from_pretrained="/home/manu/perso/RL_Connect4/model_0.pth",
-    model_output_path="/home/manu/perso/RL_Connect4/model_2.pth"
+    # from_pretrained="../models/model_0.pth",
+    model_output_path="../models/model_2.pth"
 )
 trainer = Trainer(model=NaiveNet(ROW_COUNT, COLUMN_COUNT),
                   train_dataset=train_set,

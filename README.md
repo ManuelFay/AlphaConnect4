@@ -15,7 +15,7 @@ agents but does not scale well when confronted with too much depth and is exploi
 
 ```pip install -r dev_requirements.txt```
  
-- (Optional) Change game parameters in `gameplay/constants.py`
+- (Optional) Change game parameters in `constants/constants.py`
 - Modify ```run_game.py``` to setup the game mode and difficulty.
 
 ### Parameters
@@ -51,7 +51,7 @@ choose moves that are not always optimal but rather sampled from the estimated p
 the first 10 moves. This allows to generate a greater diversity of games and help the neural evaluator learn general 
 patterns.
 
-Once enough positions have been generated (up to you, I use 20k+), use `neural_evaluator/training_script.py` to train a 
+Once enough positions have been generated (up to you, I use 20k+), use `neural_scripts/training_script.py` to train a 
 new model to better evaluate position value and optimal policy. You can modify the model structure by replacing the 
 NaiveNet or playing with the loss function parameters. It is then possible to play against the new version of the model
 by specifying the new weight paths in ```run_game.py```. 
