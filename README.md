@@ -91,3 +91,37 @@ weighting the MSELoss that corresponds to the win prediction more towards the en
 beginning.
 
 Enjoy ! PRs welcomed ! 
+
+### API
+
+For future web integration, a (WIP) API endpoint is provided, powered by Flask and gunicorn. For the moment,
+it needs to be hand configured in the `/api` files but CLI options will be added.
+
+#### Flask
+```bash
+python api/run_flask.py
+```
+
+#### Gunicorn
+```bash
+ gunicorn "api.run_flask_gunicorn:create_app()" \                  
+    --name connect4_backend \
+    --bind 0.0.0.0:${GUNICORN_PORT:-8000} \
+    --worker-tmp-dir /dev/shm \
+    --workers=${GUNICORN_WORKERS:-2} \
+    --threads=${GUNICORN_THREADS:-4} \
+    --worker-class=gthread \
+    --log-level=info \
+    --log-file '-' \
+    --timeout 300
+```
+#### Testing the endpoint
+
+To test the endpoint, simply send a post request with the board state:
+
+```python
+import requests
+
+r = requests.post("http://127.0.0.1:8000/get_move", json={"board":"0 "*42, "turn":"0"})
+print(r.content)
+```
