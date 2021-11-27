@@ -7,4 +7,4 @@ class BaseAgent:
 
     def kill_agent(self, result):
         """Results: 1 - Win, 0.5 - Tie, 0 - Loss"""
-        return
+        print(f"{self.__class__.__name__} has been killed with result {result}")

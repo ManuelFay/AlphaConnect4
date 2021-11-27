@@ -14,6 +14,8 @@ class Board:
                                   np.eye(4, dtype=np.uint8),
                                   np.fliplr(np.eye(4, dtype=np.uint8))]
 
+        # Possible action set for all turns
+        self.action_indices = list(range(self.board.shape[1]))
         assert isinstance(self.board, np.ndarray)
 
     def update_turn(self):
@@ -43,7 +45,8 @@ class Board:
         return False
 
     def tie(self):
-        """Checks if board is full"""
+        """Checks if board is full and score indeterminate
+        From the call trace, it should not be possible for the board to be won"""
         return not (self.board == 0).any()
 
     def get_valid_locations(self):

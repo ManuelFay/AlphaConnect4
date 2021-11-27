@@ -1,7 +1,7 @@
 import sys
 from gameplay.game import Game
 
-from alphaconnect4.agents.neural_mcts_agent import NeuralMCTSAgent
+from alphaconnect4.agents import *
 
 # Setup players (None is a human player, MCTSAgent, MinimaxAgent)
 

@@ -21,7 +21,7 @@ class Connect4Tree(Board, Node):
         self.id_ = hash(self.board.tostring())
 
     def is_terminal(self):
-        return self.winning_move(PLAYER_PIECE) or self.winning_move(AI_PIECE) or len(self.get_valid_locations()) == 0
+        return self.winning_move(PLAYER_PIECE) or self.winning_move(AI_PIECE) or self.tie()
 
     def find_children(self):
         if self.is_terminal():  # If the game is finished then no moves can be made

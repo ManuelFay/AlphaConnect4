@@ -7,30 +7,12 @@ from neural_scripts.trainer import Trainer, TrainingArgs
 from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
 
 
-def detect_full_cols(board):
-    board = ((board != 0).sum(axis=0) == 6).squeeze()
-    return np.where(board)[0].tolist()
-
-
-def normalize_policies(boards, policies):
-    new_pols = []
-    for board, pol in zip(boards, policies):
-        pol2 = pol.copy()
-        for idx in detect_full_cols(board):
-            pol2.insert(idx, 0.)
-        new_pols.append(pol2)
-
-    return np.array(new_pols)
-
-
-data_train = np.load("../data/training_2.npy", allow_pickle=True)
-data_test = np.load("../data/training_1.npy", allow_pickle=True)
+data_train = np.load("../data/training_2c.npy", allow_pickle=True)
+data_test = np.load("../data/training_2c.npy", allow_pickle=True)
 print(f"Number of samples: {data_train.shape[1]} / {data_test.shape[1]}")
 
-new_policies = normalize_policies(data_train[0], data_train[1])
-
-train_set = Connect4Dataset(data_train[0], new_policies, data_train[2], training=True)
-test_set = Connect4Dataset(data_test[0], normalize_policies(data_test[0], data_test[1]), data_test[2], training=False)
+train_set = Connect4Dataset(data_train[0], data_train[1], data_train[2], training=True)
+test_set = Connect4Dataset(data_test[0], data_test[1], data_test[2], training=False)
 
 
 args = TrainingArgs(

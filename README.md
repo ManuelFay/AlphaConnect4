@@ -73,8 +73,8 @@ of starting.
 |Neural Gen 0 vs MCTS | 0.5 sec | 81.5 - 18.5 |
 |Neural Gen 1 vs Minimax | 0.5 sec / depth 4 | 64 - 36 |
 |Neural Gen 1 vs MCTS | 0.5 sec | 70 - 30 |
-|Neural Gen 0 vs Neural Gen 1 | 0.5 sec | 41 - 59 |
-|Neural Gen 1 vs Neural Gen 2 | 0.5 sec | 49.5 - 50.5 |
+|Neural Gen 1 vs Neural Gen 0 | 0.5 sec | 59 - 41 |
+|Neural Gen 2 vs Neural Gen 1 | 0.5 sec | 50.5 - 49.5 |
 
 ### Comments
 
