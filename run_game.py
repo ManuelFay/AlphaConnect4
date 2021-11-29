@@ -10,7 +10,7 @@ agent0 = None
 # agent0 = MCTSAgent(simulation_time=3)
 # agent0 = NeuralMCTSAgent(simulation_time=3, model_path="/home/manu/perso/RL_Connect4/model_0.pth")
 
-agent1 = NeuralMCTSAgent(simulation_time=0.5, show_pbar=True, model_path="./models/model_1.pth")
+agent1 = NeuralMCTSAgent(simulation_time=3, show_pbar=True, model_path="./models/model_1.pth")
 # agent1 = MCTSAgent(simulation_time=3, tree_path=None)
 # agent1 = MinimaxAgent(max_depth=5, is_agent1=True)
 

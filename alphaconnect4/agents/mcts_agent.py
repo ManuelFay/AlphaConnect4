@@ -58,6 +58,7 @@ class MCTSAgent(BaseAgent):
             if self.show_pbar:
                 pbar.update()
         self.tree.unexplored_backlog = []
+        self.max_depth = max([np.sum(x.board != 0) for x in self.tree.children]) - np.sum(board.board != 0)
 
         if self.is_training:
             self.save_state(board)
