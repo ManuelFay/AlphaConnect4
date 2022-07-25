@@ -8,7 +8,6 @@ from tqdm import tqdm
 import numpy as np
 from alphaconnect4.agents.base_agent import BaseAgent
 from alphaconnect4.engines.mcts import MCTS
-from alphaconnect4.interfaces.mcts_interface import Connect4Tree
 
 
 class MCTSAgent(BaseAgent):
@@ -47,9 +46,7 @@ class MCTSAgent(BaseAgent):
         optimal_board = self.tree.choose(board)
         return self.tree.score(optimal_board)
 
-    def move(self, board, turn):
-        board = Connect4Tree(board, turn=turn)
-
+    def move(self, board):
         timeout_start = time.time()
         if self.show_pbar:
             pbar = tqdm()
@@ -62,7 +59,7 @@ class MCTSAgent(BaseAgent):
         if self.is_training:
             self.save_state(board)
 
-        if (board.board != 0).sum() < 10 and self.is_training:
+        if self.is_training and (board.board != 0).sum() < 10:
             optimal_board = self.tree.choose_stochastic(board, temperature=0.5)
         else:
             optimal_board = self.tree.choose(board)

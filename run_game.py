@@ -1,7 +1,9 @@
 import sys
-from gameplay.game import Game
+from alphaconnect4.agents import MCTSAgent, NeuralMCTSAgent, MinimaxAgent
 
-from alphaconnect4.agents import *
+from alphaconnect4.interfaces.connect4.connect4_neural_interface import Connect4NeuralInterface as NI
+from gameplay.connect4.game import Game
+from gameplay.quarto.game import Game
 
 # Setup players (None is a human player, MCTSAgent, MinimaxAgent)
 
@@ -10,8 +12,8 @@ agent0 = None
 # agent0 = MCTSAgent(simulation_time=3)
 # agent0 = NeuralMCTSAgent(simulation_time=3, model_path="/home/manu/perso/RL_Connect4/model_0.pth")
 
-agent1 = NeuralMCTSAgent(simulation_time=0.5, show_pbar=True, model_path="./models/model_1.pth")
-# agent1 = MCTSAgent(simulation_time=3, tree_path=None)
+# agent1 = NeuralMCTSAgent(simulation_time=3, show_pbar=True, neural_interface=NI(model_path="./models/model_1.pth"))
+agent1 = MCTSAgent(simulation_time=3, show_pbar=True)
 # agent1 = MinimaxAgent(max_depth=5, is_agent1=True)
 
 game = Game(agent0=agent0, agent1=agent1, enable_ui=True)
@@ -25,3 +27,4 @@ else:
     print("It's a tie")
 
 sys.exit()
+    

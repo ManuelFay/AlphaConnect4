@@ -8,10 +8,10 @@ from alphaconnect4.interfaces.neural_interface import NeuralInterface
 class NeuralMCTS(MCTS):
     "Neural Monte Carlo tree searcher. First rollout the tree then choose a move."
 
-    def __init__(self, exploration_weight=1, model_path=None):
+    def __init__(self, neural_interface: NeuralInterface, exploration_weight=1):
         super().__init__(exploration_weight)
         self.p_value = defaultdict(int)  # total visit count for each node
-        self.neural_interface = NeuralInterface(model_path=model_path)
+        self.neural_interface: NeuralInterface = neural_interface
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)

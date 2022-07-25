@@ -6,9 +6,6 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 WHITE = (150, 150, 150)
 
-ROW_COUNT = 6
-COLUMN_COUNT = 7
-
 PLAYER = 0
 AI = 1
 

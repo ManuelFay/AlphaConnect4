@@ -1,7 +1,9 @@
 import pygame
 
-from alphaconnect4.constants.constants import BLACK, BLUE, SQUARESIZE, COLUMN_COUNT, ROW_COUNT, RED, YELLOW, RADIUS, WHITE
+from alphaconnect4.interfaces.connect4.constants import BLACK, BLUE, SQUARESIZE, RED, YELLOW, RADIUS, WHITE
 
+
+ROW_COUNT, COLUMN_COUNT = 6, 7
 
 class VisualEngine:
     def __init__(self):

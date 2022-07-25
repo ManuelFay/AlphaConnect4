@@ -1,8 +1,10 @@
 import math
 import random
 
-from alphaconnect4.constants.constants import PLAYER_PIECE, AI_PIECE, EMPTY, ROW_COUNT, COLUMN_COUNT, WINDOW_LENGTH
+from alphaconnect4.interfaces.connect4.constants import PLAYER_PIECE, AI_PIECE, EMPTY, WINDOW_LENGTH
 from alphaconnect4.interfaces.board import Board
+
+ROW_COUNT, COLUMN_COUNT = 6, 7
 
 
 class MinimaxEngine(Board):

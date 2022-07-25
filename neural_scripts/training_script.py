@@ -4,7 +4,7 @@ from neural_scripts.dataset import Connect4Dataset
 from alphaconnect4.interfaces.naive_nn import NaiveNet
 from neural_scripts.trainer import Trainer, TrainingArgs
 
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.interfaces.connect4.constants import ROW_COUNT, COLUMN_COUNT
 
 
 data_train = np.load("../data/training_2c.npy", allow_pickle=True)

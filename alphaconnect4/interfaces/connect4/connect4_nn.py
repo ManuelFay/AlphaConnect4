@@ -5,9 +5,10 @@ import torch.nn.functional as F
 import torch.nn as nn
 
 
-class NaiveNet(torch.nn.Module):
-    def __init__(self, num_rows: int, num_cols: int):
+class Connect4Net(torch.nn.Module):
+    def __init__(self):
         super().__init__()
+        num_rows, num_cols = 6, 7
         self.conv1 = nn.Conv2d(2, 50, (3, 3))
         self.conv2 = nn.Conv2d(50, 100, (3, 3))
         self.dropout_1 = nn.Dropout(p=0.3, inplace=False)

@@ -11,7 +11,7 @@ from flask import request, jsonify
 from flask_cors import CORS
 
 from alphaconnect4.agents.base_agent import BaseAgent
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.interfaces.connect4.constants import ROW_COUNT, COLUMN_COUNT
 
 
 @dataclass
@@ -43,8 +43,8 @@ class RunFlaskCommand:
         current_turn = user_request.get("turn") or ""
 
         board = self.board_from_string(current_board)
-
-        result = int(self.agent.move(board, turn=int(current_turn)))
+        board = Connect4Tree(board, turn=int(current_turn))
+        result = int(self.agent.move(board))
         confidence = float(self.agent.ai_confidence)
 
         if self._log_dir is not None:

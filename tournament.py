@@ -2,11 +2,13 @@ from dataclasses import dataclass
 from typing import Optional
 from random import sample
 
-from gameplay.game import Game
+from gameplay.connect4.game import Game
 
 from alphaconnect4.agents.mcts_agent import MCTSAgent
 from alphaconnect4.agents.neural_mcts_agent import NeuralMCTSAgent
 from alphaconnect4.agents.minimax_agent import MinimaxAgent
+from alphaconnect4.interfaces.connect4 import Connect4NeuralInterface as NI
+
 
 
 @dataclass
@@ -22,7 +24,7 @@ def instanciator(player: Player):
     if player.type == "mcts":
         return MCTSAgent(simulation_time=player.time)
     if player.type == "neural_mcts":
-        return NeuralMCTSAgent(simulation_time=player.time, model_path=player.pretrained_path)
+        return NeuralMCTSAgent(simulation_time=player.time, neural_interface=NI(model_path=player.pretrained_path))
     if player.type == "minimax":
         return MinimaxAgent(max_depth=int(player.time))
     raise ValueError
