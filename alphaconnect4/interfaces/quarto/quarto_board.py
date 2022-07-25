@@ -42,15 +42,17 @@ class QuartoBoard(Board):
 
     def winning_move(self):
         board = np.unpackbits(np.expand_dims(self.board, 2), 2, bitorder='little').astype(np.bool)
-        for channel in range(4):
-            for kernel in self.detection_kernels:
-                if (convolve2d((~board[:, :, 4] & (board[:, :, channel] == 0)).astype(np.uint8), kernel,
+        mask = ~board[:, :, 4]
+        board = board[:, :, :4]
+        for kernel in self.detection_kernels:
+            for channel in range(4):
+                if (convolve2d((mask & (~board[:, :, channel])).astype(np.uint8), kernel,
                                mode="valid") == 4).any():
                     return True
-                if (convolve2d((~board[:, :, 4] & (board[:, :, channel] == 1)).astype(np.uint8), kernel,
+                if (convolve2d((mask & (board[:, :, channel])).astype(np.uint8), kernel,
                                mode="valid") == 4).any():
                     return True
-            return False
+        return False
 
     def tie(self):
         """Checks if board is full and score indeterminate

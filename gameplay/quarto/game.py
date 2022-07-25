@@ -48,7 +48,10 @@ class Game:
 
     def play(self):
         """ Game routine - call the visual engine, the UI, the AI and the board state."""
+        i = 0
+        posx, posy = None, None
         while not self.game_over:
+            default_move = self.board.available_pieces[i % len(self.board.available_pieces)]
 
             if self.board.turn == 0 and self.agent0 is not None:  # If it is the AI turn
                 board = QuartoTree(board=self.board.board, turn=self.board.turn)
@@ -73,25 +76,28 @@ class Game:
                     if event.type == pygame.QUIT:
                         sys.exit()
 
-                    if event.type == pygame.MOUSEMOTION:
-                        pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))
-                        posx, posy = event.pos[0], event.pos[1]
-                        pygame.draw.circle(self.visual_engine.screen, WHITE, (posx, posy), RADIUS)
-
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))
                         # Ask for Player n Input
                         posx, posy = event.pos[0], event.pos[1]
                         col, row = int(math.floor(posx / SQUARESIZE)), int(math.floor((self.visual_engine.height - posy)/ SQUARESIZE))
                         # self.make_move((row, col, random.choice(self.board.available_pieces)))
+                        self.make_move((row, col, default_move))
+                        self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
 
-                        print(self.board.available_pieces)
-                        piece_id = input("Piece to play ? (0000 - 1111 amongst the above options) : ")
-                        piece_id = int(piece_id[3]) + int(piece_id[2])*2 + int(piece_id[1])*4 + int(piece_id[0])*8
-                        print(piece_id)
-                        self.make_move((row, col, piece_id))
+                    if event.type == pygame.KEYDOWN:
+                        i += -1 if event.scancode == 80 else 1
 
-                    self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                        default_move = self.board.available_pieces[i % len(self.board.available_pieces)]
+                        self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                        if posx and posy:
+                            self.visual_engine.draw_piece((posx, posy), default_move)
+
+                    if event.type == pygame.MOUSEMOTION:
+                        pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))
+                        posx, posy = event.pos[0], event.pos[1]
+                        self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)
+                        self.visual_engine.draw_piece((posx, posy), default_move)
 
         if self.visual_engine:
             self.visual_engine.draw_board(self.board.board, self.agent1.ai_confidence if self.agent1 else 0)

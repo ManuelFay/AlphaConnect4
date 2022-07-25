@@ -16,6 +16,27 @@ class VisualEngine:
         self.screen = pygame.display.set_mode(size)
         self.myfont = pygame.font.SysFont("monospace", 75)
 
+    def draw_piece(self, pos, piece_id):
+        posx, posy = pos
+        bin = np.binary_repr(piece_id, width=4)[::-1]
+        pygame.draw.circle(self.screen,
+                           RED if bin[0] == "1" else YELLOW,
+                           (int(posx - SQUARESIZE / 4),
+                            int(posy - SQUARESIZE / 4)), RADIUS / 2)
+        pygame.draw.circle(self.screen, RED if bin[1] == "1" else YELLOW,
+                           (int(posx + SQUARESIZE / 4),
+                            int(posy - SQUARESIZE / 4)),
+                           RADIUS / 2)
+        pygame.draw.circle(self.screen, RED if bin[2] == "1" else YELLOW,
+                           (int(posx - SQUARESIZE / 4),
+                            int(posy + SQUARESIZE / 4)),
+                           RADIUS / 2)
+        pygame.draw.circle(self.screen, RED if bin[3] == "1" else YELLOW,
+                           (int(posx + SQUARESIZE / 4),
+                            int(posy + SQUARESIZE / 4)),
+                           RADIUS / 2)
+        pygame.display.update()
+
     def draw_board(self, board, ai_confidence: float = 0.5):
         ai_confidence = max(0., min(ai_confidence, 1.))
 
@@ -33,19 +54,19 @@ class VisualEngine:
                 if not board[row][col][4]:
                     pygame.draw.circle(self.screen, RED if board[row][col][0] else YELLOW,
                                        (int(col * SQUARESIZE + SQUARESIZE / 4),
-                                        self.height - int(row * SQUARESIZE + SQUARESIZE / 4)),
+                                        self.height - int(row * SQUARESIZE + 3*SQUARESIZE / 4)),
                                        RADIUS/2)
                     pygame.draw.circle(self.screen, RED if board[row][col][1] else YELLOW,
-                                       (int(col * SQUARESIZE + SQUARESIZE / 4),
+                                       (int(col * SQUARESIZE + 3*SQUARESIZE / 4),
                                         self.height - int(row * SQUARESIZE + 3*SQUARESIZE / 4)),
                                        RADIUS / 2)
                     pygame.draw.circle(self.screen, RED if board[row][col][2] else YELLOW,
-                                       (int(col * SQUARESIZE + 3*SQUARESIZE / 4),
+                                       (int(col * SQUARESIZE + SQUARESIZE / 4),
                                         self.height - int(row * SQUARESIZE + SQUARESIZE / 4)),
                                        RADIUS / 2)
                     pygame.draw.circle(self.screen, RED if board[row][col][3] else YELLOW,
                                        (int(col * SQUARESIZE + 3*SQUARESIZE / 4),
-                                        self.height - int(row * SQUARESIZE + 3*SQUARESIZE / 4)),
+                                        self.height - int(row * SQUARESIZE + SQUARESIZE / 4)),
                                        RADIUS / 2)
                         # pygame.draw.circle(self.screen, BLACK, (
                         #     int(col * SQUARESIZE + SQUARESIZE / 2),
