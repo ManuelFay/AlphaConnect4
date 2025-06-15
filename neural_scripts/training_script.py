@@ -15,8 +15,8 @@ test_set = Connect4Dataset(data_test[0], data_test[1], data_test[2], training=Fa
 
 
 args = TrainingArgs(
-    train_epochs=100,
-    batch_size=50,
+    train_epochs=20,
+    batch_size=32,
     print_progress=True,
     # from_pretrained="./models/model_0.pth",
     model_output_path="./models/model_0.pth",

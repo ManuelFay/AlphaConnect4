@@ -9,9 +9,9 @@ class ConvTransformerNet(nn.Module):
         num_rows: int,
         num_cols: int,
         embed_dim: int = 32,  # token embedding size
-        depth: int = 2,  # number of Transformer layers
-        n_heads: int = 4,  # attention heads
-        ff_dim: int = 256,  # feed-forward hidden dim
+        depth: int = 4,  # number of Transformer layers
+        n_heads: int = 8,  # attention heads
+        ff_dim: int = 128,  # feed-forward hidden dim
         dropout: float = 0.1,
     ):
         super().__init__()
