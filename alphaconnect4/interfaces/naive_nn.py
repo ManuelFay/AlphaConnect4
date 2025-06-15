@@ -2,7 +2,7 @@
 
 import torch
 import torch.nn as nn
-from torch.nn.functional import relu
+import torch.nn.functional as F
 
 
 class NaiveNet(torch.nn.Module):
@@ -23,14 +23,14 @@ class NaiveNet(torch.nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = relu(self.conv1(x))
+        x = F.relu(self.conv1(x))
         x = self.dropout_1(x)
-        x = relu(self.conv2(x))
+        x = F.relu(self.conv2(x))
         x = self.dropout_2(x)
 
         x = x.view(-1, self.flat_size)
 
-        policy_x = self.softmax(self.linear_p2(relu(self.linear_p1(x))))
-        score_x = self.softmax(self.linear_s2(relu(self.linear_s1(x))))[:, 1]
+        policy_x = self.softmax(self.linear_p2(F.relu(self.linear_p1(x))))
+        score_x = self.softmax(self.linear_s2(F.relu(self.linear_s1(x))))[:, 1]
 
         return policy_x, score_x

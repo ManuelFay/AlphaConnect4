@@ -65,7 +65,7 @@ class Trainer:
 
             total_loss = total_loss / len(data_loader)
             if self.training_args.print_progress:
-                print(f"\n Loss/train: {total_loss} - {epoch}")
+                print(f"\n Loss/train: {total_loss} - Epoch {epoch}")
             self.infer(epoch=epoch)
 
         if self.training_args.model_output_path:
@@ -91,4 +91,4 @@ class Trainer:
         self.model.train()
 
         if self.training_args.print_progress:
-            print(f"\n Loss/test: {total_loss} - {epoch}")
+            print(f"\n Loss/test: {total_loss} - Epoch {epoch}")
