@@ -1,7 +1,7 @@
 import math
 import random
 
-from alphaconnect4.constants.constants import PLAYER_PIECE, AI_PIECE, EMPTY, ROW_COUNT, COLUMN_COUNT, WINDOW_LENGTH
+from alphaconnect4.constants.constants import AI_PIECE, COLUMN_COUNT, EMPTY, PLAYER_PIECE, ROW_COUNT, WINDOW_LENGTH
 from alphaconnect4.interfaces.board import Board
 
 
@@ -20,8 +20,9 @@ class MinimaxEngine(Board):
         if depth == 0:
             return None, self.score_position(AI_PIECE)
         if is_terminal:
-            return None, (1000000000000000 * self.winning_move(AI_PIECE) + -1000000000000000 * self.winning_move(
-                PLAYER_PIECE))
+            return None, (
+                1000000000000000 * self.winning_move(AI_PIECE) + -1000000000000000 * self.winning_move(PLAYER_PIECE)
+            )
 
         value = -math.inf if adversarial else math.inf
         column = random.choice(valid_locations)
@@ -79,14 +80,14 @@ class MinimaxEngine(Board):
         for row in range(ROW_COUNT):
             row_array = [int(i) for i in list(self.board[row, :])]
             for col in range(COLUMN_COUNT - 3):
-                window = row_array[col:col + WINDOW_LENGTH]
+                window = row_array[col : col + WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         # Score Vertical
         for col in range(COLUMN_COUNT):
             col_array = [int(i) for i in list(self.board[:, col])]
             for row in range(ROW_COUNT - 3):
-                window = col_array[row:row + WINDOW_LENGTH]
+                window = col_array[row : row + WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         # Score positive sloped diagonal

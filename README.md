@@ -14,7 +14,7 @@ agents but does not scale well when confronted with too much depth and is exploi
  - In a new virtual environment, run:
 
 ```pip install -r dev_requirements.txt```
- 
+
 - (Optional) Change game parameters in `constants/constants.py`
 - Modify ```run_game.py``` to setup the game mode and difficulty.
 

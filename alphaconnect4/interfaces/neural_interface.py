@@ -2,8 +2,8 @@
 
 import torch
 
+from alphaconnect4.constants.constants import COLUMN_COUNT, ROW_COUNT
 from alphaconnect4.interfaces.naive_nn import NaiveNet
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
 
 
 class NeuralInterface:

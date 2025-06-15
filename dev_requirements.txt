@@ -2,7 +2,7 @@
 
 -e .
 
-pygame==2.0.0
+pygame
 tensorboard
 pylint
 flask

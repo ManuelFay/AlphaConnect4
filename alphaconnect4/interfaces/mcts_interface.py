@@ -1,7 +1,7 @@
 import random
-from alphaconnect4.engines.mcts import Node
-from alphaconnect4.constants.constants import PLAYER_PIECE, AI_PIECE
 
+from alphaconnect4.constants.constants import AI_PIECE, PLAYER_PIECE
+from alphaconnect4.engines.mcts import Node
 from alphaconnect4.interfaces.board import Board
 
 
@@ -18,7 +18,7 @@ class Connect4Tree(Board, Node):
         return child
 
     def update_id(self):
-        self.id_ = hash(self.board.tostring())
+        self.id_ = hash(self.board.tobytes())
 
     def is_terminal(self):
         return self.winning_move(PLAYER_PIECE) or self.winning_move(AI_PIECE) or self.tie()

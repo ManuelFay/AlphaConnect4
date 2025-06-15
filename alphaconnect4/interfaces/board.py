@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import convolve2d
 
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.constants.constants import COLUMN_COUNT, ROW_COUNT
 
 
 class Board:
@@ -9,10 +9,12 @@ class Board:
         self.board = np.zeros((ROW_COUNT, COLUMN_COUNT)).astype(np.uint8) if board is None else board
         self.turn = turn
         self.last_move = None
-        self.detection_kernels = [np.ones((1, 4), dtype=np.uint8),
-                                  np.ones((4, 1), dtype=np.uint8),
-                                  np.eye(4, dtype=np.uint8),
-                                  np.fliplr(np.eye(4, dtype=np.uint8))]
+        self.detection_kernels = [
+            np.ones((1, 4), dtype=np.uint8),
+            np.ones((4, 1), dtype=np.uint8),
+            np.eye(4, dtype=np.uint8),
+            np.fliplr(np.eye(4, dtype=np.uint8)),
+        ]
 
         # Possible action set for all turns
         self.action_indices = list(range(self.board.shape[1]))
