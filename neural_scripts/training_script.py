@@ -15,14 +15,14 @@ test_set = Connect4Dataset(data_test[0], data_test[1], data_test[2], training=Fa
 
 
 args = TrainingArgs(
-    train_epochs=20,
-    batch_size=32,
+    train_epochs=10,
+    batch_size=50,
     print_progress=True,
     # from_pretrained="./models/model_0.pth",
-    model_output_path="./models/model_0.pth",
+    model_output_path="./models/model_naive1.pth",
 )
 trainer = Trainer(
-    model=ConvTransformerNet(ROW_COUNT, COLUMN_COUNT) if True else NaiveNet(ROW_COUNT, COLUMN_COUNT),
+    model=ConvTransformerNet(ROW_COUNT, COLUMN_COUNT) if False else NaiveNet(ROW_COUNT, COLUMN_COUNT),
     train_dataset=train_set,
     test_dataset=test_set,
     training_args=args,

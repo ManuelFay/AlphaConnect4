@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class ConvTransformerNet(nn.Module):
@@ -8,8 +7,8 @@ class ConvTransformerNet(nn.Module):
         self,
         num_rows: int,
         num_cols: int,
-        embed_dim: int = 32,  # token embedding size
-        depth: int = 4,  # number of Transformer layers
+        embed_dim: int = 64,  # token embedding size
+        depth: int = 2,  # number of Transformer layers
         n_heads: int = 8,  # attention heads
         ff_dim: int = 128,  # feed-forward hidden dim
         dropout: float = 0.1,
@@ -72,7 +71,7 @@ class ConvTransformerNet(nn.Module):
         )
 
     def forward(self, x, legal_mask=None):
-        B = x.size(0)
+        batch_size = x.size(0)
 
         # 1) Local feature projection via conv-stem + residual
         h0 = self.stem_residual(x)
@@ -83,7 +82,7 @@ class ConvTransformerNet(nn.Module):
         h = h.flatten(2).transpose(1, 2)
 
         # 3) Prepend CLS token
-        cls = self.cls_token.expand(B, -1, -1)  # (B, 1, D)
+        cls = self.cls_token.expand(batch_size, -1, -1)  # (B, 1, D)
         h = torch.cat([cls, h], dim=1)  # (B, P+1, D)
 
         # 4) Add positional embeddings
@@ -107,12 +106,12 @@ class ConvTransformerNet(nn.Module):
         h = self.transformer(h)  # (B, P+1, D)
 
         # 7) Policy: average tokens per column + dropout + head
-        tokens = h[:, 1:, :].view(B, self.num_rows, self.num_cols, -1)
+        tokens = h[:, 1:, :].view(batch_size, self.num_rows, self.num_cols, -1)
         policy_tokens = tokens.mean(dim=1)  # (B, num_cols, D)
         logits = self.policy_head(self.policy_dropout(policy_tokens)).squeeze(-1)
         if legal_mask is not None:
             logits = logits.masked_fill(~legal_mask, float("-inf"))
-        policy = F.softmax(logits, dim=-1)
+        policy = torch.nn.functional.softmax(logits, dim=-1)
 
         # 8) Value: use CLS, dropout, head
         cls_out = h[:, 0, :]

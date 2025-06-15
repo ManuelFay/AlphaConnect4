@@ -18,8 +18,8 @@ class NeuralInterface:
                     self.model.load_state_dict(torch.load(model_path))
                     print(f"Successfully loaded model from {model_path}")
                     break
-                except Exception as e:
-                    print(f"Error loading model with {architecture.__name__}: {e}")
+                except Exception:
+                    print(f"Error loading model with {architecture.__name__}, trying next architecture")
         self.model.eval()
 
     def score(self, node):

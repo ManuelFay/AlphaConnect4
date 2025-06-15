@@ -13,10 +13,17 @@ from alphaconnect4.interfaces.mcts_interface import Connect4Tree
 
 
 class MCTSAgent(BaseAgent):
-    def __init__(self, simulation_time: float = 3.0, training_path: Optional[str] = None, show_pbar: bool = False):
+    def __init__(
+        self,
+        simulation_time: float = 3.0,
+        max_rollouts: Optional[int] = None,
+        training_path: Optional[str] = None,
+        show_pbar: bool = False,
+    ):
         """is_training: weakens the agent to get more diverse training samples"""
         super().__init__()
         self.simulation_time = simulation_time
+        self.max_rollouts = max_rollouts if max_rollouts is not None else int(simulation_time * 10000)
         self.tree = MCTS()
         self.training_path = training_path
         self.is_training = training_path is not None
@@ -48,10 +55,12 @@ class MCTSAgent(BaseAgent):
     def move(self, board, turn):
         board = Connect4Tree(board, turn=turn)
 
+        num_rollout = 0
         timeout_start = time.time()
         if self.show_pbar:
             pbar = tqdm()
-        while time.time() < timeout_start + self.simulation_time:
+        while time.time() < timeout_start + self.simulation_time and num_rollout < self.max_rollouts:
+            num_rollout += 1
             self.tree.do_rollout(board)
             if self.show_pbar:
                 pbar.update()
