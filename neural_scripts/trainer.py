@@ -1,16 +1,15 @@
 # pylint: disable=not-callable, no-member, no-name-in-module
+import os
 from dataclasses import dataclass
 from typing import Optional
-import os
-
-from tqdm import tqdm
 
 import torch
-from torch.utils.data import DataLoader
 from torch.optim.adam import Adam
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
-from neural_scripts.dataset import Connect4Dataset
 from neural_scripts.custom_loss import AlphaLoss
+from neural_scripts.dataset import Connect4Dataset
 
 
 @dataclass
@@ -25,12 +24,13 @@ class TrainingArgs:
 
 
 class Trainer:
-    def __init__(self,
-                 model,
-                 train_dataset: Connect4Dataset,
-                 test_dataset: Connect4Dataset,
-                 training_args: TrainingArgs = TrainingArgs()):
-
+    def __init__(
+        self,
+        model,
+        train_dataset: Connect4Dataset,
+        test_dataset: Connect4Dataset,
+        training_args: TrainingArgs = TrainingArgs(),
+    ):
         self.model = model.to(training_args.device)
         self.train_dataset = train_dataset
         self.test_dataset = test_dataset
@@ -51,10 +51,9 @@ class Trainer:
         for epoch in tqdm(range(self.training_args.train_epochs)):
             total_loss = 0
             for batch in data_loader:
-
-                boards = batch['boards'].to(self.training_args.device)
-                policies = batch['policies'].to(self.training_args.device)
-                wins = batch['success'].to(self.training_args.device)
+                boards = batch["boards"].to(self.training_args.device)
+                policies = batch["policies"].to(self.training_args.device)
+                wins = batch["success"].to(self.training_args.device)
 
                 self.model.zero_grad()
                 output_pol, output_pos = self.model(boards)
@@ -64,7 +63,7 @@ class Trainer:
 
                 total_loss += loss.item()
 
-            total_loss = total_loss/len(data_loader)
+            total_loss = total_loss / len(data_loader)
             if self.training_args.print_progress:
                 print(f"\n Loss/train: {total_loss} - {epoch}")
             self.infer(epoch=epoch)
@@ -74,15 +73,15 @@ class Trainer:
 
     def infer(self, test_dataset=None, epoch=None):
         self.model.eval()
-        data_loader = DataLoader(test_dataset if test_dataset else self.test_dataset,
-                                 batch_size=self.training_args.batch_size,
-                                 shuffle=False)
+        data_loader = DataLoader(
+            test_dataset if test_dataset else self.test_dataset, batch_size=self.training_args.batch_size, shuffle=False
+        )
 
         total_loss = 0
         for batch in data_loader:
-            boards = batch['boards'].to(self.training_args.device)
-            policies = batch['policies'].to(self.training_args.device)
-            wins = batch['success'].to(self.training_args.device)
+            boards = batch["boards"].to(self.training_args.device)
+            policies = batch["policies"].to(self.training_args.device)
+            wins = batch["success"].to(self.training_args.device)
 
             with torch.no_grad():
                 output_pol, output_pos = self.model(boards)

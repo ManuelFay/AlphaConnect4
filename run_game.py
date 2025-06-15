@@ -1,7 +1,7 @@
 import sys
-from gameplay.game import Game
 
-from alphaconnect4.agents import *
+from alphaconnect4.agents import MCTSAgent
+from gameplay.game import Game
 
 # Setup players (None is a human player, MCTSAgent, MinimaxAgent)
 

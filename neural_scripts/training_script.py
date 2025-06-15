@@ -1,11 +1,9 @@
 import numpy as np
 
-from neural_scripts.dataset import Connect4Dataset
+from alphaconnect4.constants.constants import COLUMN_COUNT, ROW_COUNT
 from alphaconnect4.interfaces.naive_nn import NaiveNet
+from neural_scripts.dataset import Connect4Dataset
 from neural_scripts.trainer import Trainer, TrainingArgs
-
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
-
 
 data_train = np.load("../data/training_2c.npy", allow_pickle=True)
 data_test = np.load("../data/training_2c.npy", allow_pickle=True)
@@ -20,12 +18,10 @@ args = TrainingArgs(
     batch_size=500,
     print_progress=True,
     # from_pretrained="../models/model_0.pth",
-    model_output_path="../models/model_2.pth"
+    model_output_path="../models/model_2.pth",
 )
-trainer = Trainer(model=NaiveNet(ROW_COUNT, COLUMN_COUNT),
-                  train_dataset=train_set,
-                  test_dataset=test_set,
-                  training_args=args
-                  )
+trainer = Trainer(
+    model=NaiveNet(ROW_COUNT, COLUMN_COUNT), train_dataset=train_set, test_dataset=test_set, training_args=args
+)
 
 trainer.train()

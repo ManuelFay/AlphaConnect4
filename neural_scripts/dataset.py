@@ -1,5 +1,6 @@
 # pylint: disable=not-callable, no-member, no-name-in-module
 import random
+
 import torch
 
 
@@ -20,9 +21,11 @@ class Connect4Dataset(torch.utils.data.Dataset):
         boards = torch.zeros(2, *tmp_boards.shape, dtype=torch.float32)
         boards[0, tmp_boards == 1] = 1
         boards[1, tmp_boards == 2] = 1
-        item = {"boards": boards,
-                "policies": torch.tensor(self.policies[idx], dtype=torch.float32),
-                "success": torch.tensor(self.success[idx], dtype=torch.float32)}
+        item = {
+            "boards": boards,
+            "policies": torch.tensor(self.policies[idx], dtype=torch.float32),
+            "success": torch.tensor(self.success[idx], dtype=torch.float32),
+        }
 
         return item
 
