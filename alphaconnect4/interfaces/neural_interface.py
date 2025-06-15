@@ -2,16 +2,24 @@
 
 import torch
 
+from alphaconnect4.constants.constants import COLUMN_COUNT, ROW_COUNT
 from alphaconnect4.interfaces.naive_nn import NaiveNet
-from alphaconnect4.constants.constants import ROW_COUNT, COLUMN_COUNT
+from alphaconnect4.interfaces.transformer_nn import ConvTransformerNet
 
 
 class NeuralInterface:
     def __init__(self, model_path=None):
-        self.model = NaiveNet(num_rows=ROW_COUNT, num_cols=COLUMN_COUNT)
+        self.model = None
         if model_path:
             # print(f"Loading weights from {model_path}")
-            self.model.load_state_dict(torch.load(model_path))
+            for architecture in [ConvTransformerNet, NaiveNet]:
+                try:
+                    self.model = architecture(ROW_COUNT, COLUMN_COUNT)
+                    self.model.load_state_dict(torch.load(model_path))
+                    print(f"Successfully loaded model from {model_path}")
+                    break
+                except Exception:
+                    print(f"Error loading model with {architecture.__name__}, trying next architecture")
         self.model.eval()
 
     def score(self, node):

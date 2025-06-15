@@ -1,14 +1,13 @@
 # pylint: disable=no-member
-import sys
 import math
 import random
+import sys
 
 import pygame
 
-from alphaconnect4.interfaces.board import Board
-from alphaconnect4.constants.constants import YELLOW, RED, BLUE, SQUARESIZE, RADIUS, BLACK
 from alphaconnect4.agents.base_agent import BaseAgent
-
+from alphaconnect4.constants.constants import BLACK, BLUE, RADIUS, RED, SQUARESIZE, YELLOW
+from alphaconnect4.interfaces.board import Board
 from gameplay.visual_engine import VisualEngine
 
 
@@ -31,11 +30,12 @@ class Game:
             row = self.board.get_next_open_row(col)
             self.board.drop_piece(row, col)
 
-            if self.board.winning_move((1-self.board.turn) + 1):
+            if self.board.winning_move((1 - self.board.turn) + 1):
                 self.board.update_turn()
                 if self.visual_engine:
-                    label = self.visual_engine.myfont.render(f"Player {self.board.turn} wins!!", 1,
-                                                             YELLOW if self.board.turn else RED)
+                    label = self.visual_engine.myfont.render(
+                        f"Player {self.board.turn} wins!!", 1, YELLOW if self.board.turn else RED
+                    )
                     self.visual_engine.screen.blit(label, (40, 10))
                 self.game_over = True
                 self.result = self.board.turn
@@ -48,9 +48,8 @@ class Game:
                 self.result = 0.5
 
     def play(self):
-        """ Game routine - call the visual engine, the UI, the AI and the board state."""
+        """Game routine - call the visual engine, the UI, the AI and the board state."""
         while not self.game_over:
-
             if self.board.turn == 0 and self.agent0 is not None:  # If it is the AI turn
                 col = self.agent0.move(board=self.board.board, turn=self.board.turn)
                 self.make_move(col)
@@ -75,8 +74,12 @@ class Game:
                     if event.type == pygame.MOUSEMOTION:
                         pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))
                         posx = event.pos[0]
-                        pygame.draw.circle(self.visual_engine.screen, YELLOW if self.board.turn else RED,
-                                           (posx, int(SQUARESIZE / 2)), RADIUS)
+                        pygame.draw.circle(
+                            self.visual_engine.screen,
+                            YELLOW if self.board.turn else RED,
+                            (posx, int(SQUARESIZE / 2)),
+                            RADIUS,
+                        )
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         pygame.draw.rect(self.visual_engine.screen, BLACK, (0, 0, self.visual_engine.width, SQUARESIZE))

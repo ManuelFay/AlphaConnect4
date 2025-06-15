@@ -1,5 +1,5 @@
-from collections import defaultdict
 import math
+from collections import defaultdict
 
 from alphaconnect4.engines.mcts import MCTS
 from alphaconnect4.interfaces.neural_interface import NeuralInterface
@@ -15,7 +15,7 @@ class NeuralMCTS(MCTS):
 
     def do_rollout(self, node):
         """Make the tree one layer better. (Train for one iteration.)
-        In the neural version, score leafs with NN and store policy vectors """
+        In the neural version, score leafs with NN and store policy vectors"""
         path = self._select(node)
         leaf = path[-1]
         self._expand(leaf)
@@ -41,6 +41,7 @@ class NeuralMCTS(MCTS):
         def uct(n):
             "Upper confidence bound for trees"
             return self.q_value[n] / self.visit_count[n] + self.exploration_weight * self.p_value[n] * vertex_count / (
-                        1 + self.visit_count[n])
+                1 + self.visit_count[n]
+            )
 
         return max(self.children[node], key=uct)

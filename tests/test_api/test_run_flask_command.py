@@ -2,11 +2,12 @@
 import os
 from shutil import rmtree
 from unittest import TestCase
-from unittest.mock import create_autospec   # patch
+from unittest.mock import create_autospec  # patch
+
 from flask import Flask
 
-from api.run_flask import RunFlaskCommand, FlaskConfig
 from alphaconnect4.agents.base_agent import BaseAgent
+from api.run_flask import FlaskConfig, RunFlaskCommand
 
 
 class TestRunFlaskCommand(TestCase):
@@ -32,5 +33,5 @@ class TestRunFlaskCommand(TestCase):
         self.assertTrue(os.path.exists(self.log_dir))
 
     def test_board_from_str(self):
-        board = self.command.board_from_string("0 "*(36) + "1 2 1 1 2 2 ")
+        board = self.command.board_from_string("0 " * (36) + "1 2 1 1 2 2 ")
         self.assertEqual(board.shape, (6, 7))

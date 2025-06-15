@@ -4,10 +4,12 @@ Luke Harold Miles, July 2019, Public Domain Dedication
 See also https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
 https://gist.github.com/qpwo/c538c6f73727e254fdc7fab81024f6e1
 """
+
+import math
 import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
-import math
+
 import numpy as np
 
 
@@ -15,7 +17,7 @@ class MCTS:
     "Monte Carlo tree searcher. First rollout the tree then choose a move."
 
     def __init__(self, exploration_weight=1):
-        self.q_value = defaultdict(int)  # total reward of each node
+        self.q_value = defaultdict(float)  # total reward of each node
         self.visit_count = defaultdict(int)  # total visit count for each node
         self.children = dict()  # children of each node
         self.exploration_weight = exploration_weight
@@ -25,7 +27,7 @@ class MCTS:
     def score(self, n):
         if self.visit_count[n] == 0:
             return float("-inf")  # avoid unseen moves
-        return self.q_value[n] / self.visit_count[n]  # average reward
+        return int(self.q_value[n]) / self.visit_count[n]  # average reward
 
     def get_policy(self, node, return_dict=True):
         visit_count = max(1, self.visit_count[node] - 1)
@@ -34,7 +36,7 @@ class MCTS:
         return [self.visit_count[n] / visit_count for n in sorted(self.children[node], key=lambda x: x.last_move)]
 
     def choose_deprecated(self, node):
-        """ Deprecated version of choose - Used for debugging
+        """Deprecated version of choose - Used for debugging
         Choose the best successor of node. (Choose a move in the game)"""
         # if node.is_terminal():
         #     raise RuntimeError(f"choose called on terminal node {node}")
@@ -62,13 +64,13 @@ class MCTS:
         #     raise RuntimeError(f"choose called on terminal node {node}")
 
         if node not in self.children:
-            return node.find_random_child()     # find_heuristic_child()
+            return node.find_random_child()  # find_heuristic_child()
 
         # Sample from the policy instead of choosing the max (to generate training samples)
         childs = list(self.children[node])
 
-        visit_count = np.sum([self.visit_count[n]**(1/temperature) for n in childs])
-        weights = [(self.visit_count[n]**(1/temperature))/visit_count for n in childs]
+        visit_count = np.sum([self.visit_count[n] ** (1 / temperature) for n in childs])
+        weights = [(self.visit_count[n] ** (1 / temperature)) / visit_count for n in childs]
         return random.choices(childs, weights=weights).pop()
 
     def do_rollout(self, node):
