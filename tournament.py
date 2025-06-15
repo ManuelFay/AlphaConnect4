@@ -9,7 +9,7 @@ from gameplay.game import Game
 
 # Maximum number of rollouts per turn, used for MCTSAgent and NeuralMCTSAgent.
 # Set to None for unlimited rollouts (still limited by simulation time).
-MAX_ROLLOUTS = 100
+MAX_ROLLOUTS = 1000
 
 
 @dataclass
@@ -38,12 +38,12 @@ def instanciator(player: Player):
 
 
 contestants = [
-    Player("p1", "mcts", time=5),
-    Player("p2", "neural_mcts", time=5, pretrained_path="./models/model_naive1.pth"),
+    Player("p1", "mcts", time=3),
+    Player("p2", "neural_mcts", time=3, pretrained_path="./models/model_naive0.pth"),
     # Player("p3", "minimax", time=4),
-    Player("p4", "neural_mcts", time=5, pretrained_path="./models/model_random.pth"),
-    Player("p5", "neural_mcts", time=5, pretrained_path="./models/model_transformer0.pth"),
-    Player("p5", "neural_mcts", time=5, pretrained_path="./models/model_transformer1.pth"),
+    # Player("p4", "neural_mcts", time=5, pretrained_path="./models/model_random.pth"),
+    # Player("p5", "neural_mcts", time=5, pretrained_path="./models/model_transformer0.pth"),
+    Player("p6", "neural_mcts", time=3, pretrained_path="./models/model_transformer0.pth"),
 ]
 wins = {p.name: 0 for p in contestants}
 

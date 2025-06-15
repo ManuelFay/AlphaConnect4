@@ -17,7 +17,7 @@ class MCTS:
     "Monte Carlo tree searcher. First rollout the tree then choose a move."
 
     def __init__(self, exploration_weight=1):
-        self.q_value = defaultdict(int)  # total reward of each node
+        self.q_value = defaultdict(float)  # total reward of each node
         self.visit_count = defaultdict(int)  # total visit count for each node
         self.children = dict()  # children of each node
         self.exploration_weight = exploration_weight
@@ -27,7 +27,7 @@ class MCTS:
     def score(self, n):
         if self.visit_count[n] == 0:
             return float("-inf")  # avoid unseen moves
-        return self.q_value[n] / self.visit_count[n]  # average reward
+        return int(self.q_value[n]) / self.visit_count[n]  # average reward
 
     def get_policy(self, node, return_dict=True):
         visit_count = max(1, self.visit_count[node] - 1)

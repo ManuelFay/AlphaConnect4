@@ -7,8 +7,8 @@ class ConvTransformerNet(nn.Module):
         self,
         num_rows: int,
         num_cols: int,
-        embed_dim: int = 64,  # token embedding size
-        depth: int = 2,  # number of Transformer layers
+        embed_dim: int = 128,  # token embedding size
+        depth: int = 5,  # number of Transformer layers
         n_heads: int = 8,  # attention heads
         ff_dim: int = 128,  # feed-forward hidden dim
         dropout: float = 0.1,

@@ -19,10 +19,11 @@ args = TrainingArgs(
     batch_size=50,
     print_progress=True,
     # from_pretrained="./models/model_0.pth",
-    model_output_path="./models/model_naive1.pth",
+    model_output_path="./models/model_transformer0.pth",
+    device="mps",
 )
 trainer = Trainer(
-    model=ConvTransformerNet(ROW_COUNT, COLUMN_COUNT) if False else NaiveNet(ROW_COUNT, COLUMN_COUNT),
+    model=ConvTransformerNet(ROW_COUNT, COLUMN_COUNT) if True else NaiveNet(ROW_COUNT, COLUMN_COUNT),
     train_dataset=train_set,
     test_dataset=test_set,
     training_args=args,
