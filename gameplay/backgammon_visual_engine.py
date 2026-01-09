@@ -21,6 +21,7 @@ from alphaconnect4.constants.backgammon_constants import (
 
 class BackgammonVisualEngine:
     def __init__(self):
+        """Initialize the pygame surface and fonts for rendering."""
         pygame.init()  # pylint: disable=no-member
         self.width = BOARD_MARGIN * 2 + POINT_WIDTH * 12 + POINT_WIDTH
         self.height = BOARD_MARGIN * 2 + POINT_HEIGHT * 2
@@ -30,6 +31,7 @@ class BackgammonVisualEngine:
         self.small_font = pygame.font.SysFont("monospace", 16)
 
     def _x_positions(self):
+        """X positions for the 12 points on each side, accounting for the bar."""
         positions = []
         for col in range(12):
             x = BOARD_MARGIN + col * POINT_WIDTH
@@ -39,11 +41,13 @@ class BackgammonVisualEngine:
         return positions
 
     def _point_rect(self, col, top):
+        """Top-left coordinates for a point triangle."""
         x = self._x_positions()[col]
         y = BOARD_MARGIN if top else BOARD_MARGIN + POINT_HEIGHT
         return x, y
 
     def draw_board(self, board, dice, possible_actions, selected_index):
+        """Draw the board, checkers, dice, and move list."""
         self.screen.fill(BOARD_COLOR)
 
         bar_x = BOARD_MARGIN + POINT_WIDTH * 6

@@ -18,6 +18,7 @@ class BackgammonTree(BackgammonBoard, Node):
         self._update_id()
 
     def _update_id(self) -> None:
+        """Create a hashable identity for MCTS using board + dice."""
         self.id_ = hash(
             (
                 tuple(self.points.tolist()),
@@ -31,6 +32,7 @@ class BackgammonTree(BackgammonBoard, Node):
         )
 
     def create_child(self, action: Action) -> "BackgammonTree":
+        """Apply an action and roll dice for the next player."""
         child_board = self.copy()
         child_board.apply_action(action)
         child_board.turn = 1 - child_board.turn
@@ -40,6 +42,7 @@ class BackgammonTree(BackgammonBoard, Node):
         return child
 
     def find_children(self):
+        """Expand the node into all legal actions for the current dice."""
         if self.is_terminal():
             return set()
 
@@ -54,6 +57,7 @@ class BackgammonTree(BackgammonBoard, Node):
         return {self.create_child(action) for action in actions}
 
     def find_random_child(self):
+        """Sample a random child, respecting current dice constraints."""
         if self.is_terminal():
             return None
 
@@ -69,6 +73,7 @@ class BackgammonTree(BackgammonBoard, Node):
         return self.create_child(action)
 
     def reward(self):
+        """Return win/loss outcome from the perspective of the current player."""
         if self.borne_off[0] >= 15:
             winner = 0
         elif self.borne_off[1] >= 15:

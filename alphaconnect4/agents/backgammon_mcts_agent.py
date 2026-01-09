@@ -16,6 +16,7 @@ class BackgammonMCTSAgent(BaseAgent):
         max_rollouts: int = None,
         show_pbar: bool = False,
     ):
+        """Pure MCTS agent for backgammon (no neural guidance)."""
         super().__init__()
         self.simulation_time = simulation_time
         self.max_rollouts = max_rollouts if max_rollouts is not None else int(simulation_time * 2000)
@@ -23,6 +24,7 @@ class BackgammonMCTSAgent(BaseAgent):
         self.show_pbar = show_pbar
 
     def move(self, board: BackgammonBoard, dice: Tuple[int, int]) -> Action:
+        """Run MCTS rollouts and return the selected action."""
         root = BackgammonTree(board, dice)
 
         num_rollout = 0
@@ -43,4 +45,5 @@ class BackgammonMCTSAgent(BaseAgent):
         return best.last_move if best else []
 
     def kill_agent(self, result: float):
+        """No-op hook for compatibility with training workflows."""
         return

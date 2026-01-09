@@ -11,6 +11,7 @@ from gameplay.backgammon_visual_engine import BackgammonVisualEngine
 
 class BackgammonGame:
     def __init__(self, agent0: BaseAgent = None, agent1: BaseAgent = None, enable_ui: bool = True):
+        """Gameplay loop for backgammon with optional AI agents and UI."""
         self.board = BackgammonBoard(turn=0)
         self.agent0 = agent0
         self.agent1 = agent1
@@ -20,12 +21,14 @@ class BackgammonGame:
         self.visual_engine = BackgammonVisualEngine() if enable_ui else None
 
     def _apply_action(self, action):
+        """Apply the selected action and advance to the next turn/dice."""
         if action:
             self.board.apply_action(action)
         self.board.turn = 1 - self.board.turn
         self.dice = self.board.roll_dice()
 
     def _check_game_over(self):
+        """Set terminal flags when a player bears off all checkers."""
         if self.board.is_terminal():
             self.game_over = True
             if self.board.borne_off[0] >= 15:
@@ -34,6 +37,7 @@ class BackgammonGame:
                 self.result = 1
 
     def _wait_for_human_move(self, possible_actions):
+        """Handle keyboard selection for a human player."""
         selected_index = 0
         while True:
             for event in pygame.event.get():
@@ -60,6 +64,7 @@ class BackgammonGame:
             time.sleep(0.05)
 
     def play(self):
+        """Run the full game loop until completion."""
         while not self.game_over:
             current_agent = self.agent0 if self.board.turn == 0 else self.agent1
             possible_actions = self.board.get_legal_actions(self.dice)
