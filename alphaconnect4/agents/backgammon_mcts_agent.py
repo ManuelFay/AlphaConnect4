@@ -29,15 +29,13 @@ class BackgammonMCTSAgent(BaseAgent):
 
         num_rollout = 0
         timeout_start = time.time()
-        pbar = tqdm(total=self.max_rollouts) if self.show_pbar else None
+        pbar = tqdm(total=self.max_rollouts, disable=not self.show_pbar)
         while time.time() < timeout_start + self.simulation_time and num_rollout < self.max_rollouts:
             num_rollout += 1
             self.tree.do_rollout(root)
-            if pbar is not None:
-                pbar.update()
+            pbar.update()
 
-        if pbar is not None:
-            pbar.close()
+        pbar.close()
         self.tree.unexplored_backlog = []
 
         best = self.tree.choose(root)
