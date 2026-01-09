@@ -104,13 +104,7 @@ class BackgammonVisualEngine:
                 y = BOARD_MARGIN + CHECKER_RADIUS + i * (CHECKER_RADIUS * 2 + CHECKER_SPACING)
                 pygame.draw.circle(self.screen, checker_color, (int(bar_x_center), int(y)), CHECKER_RADIUS)
 
-        dice_text = f"Dice: {dice[0]}-{dice[1]}"
-        dice_label = self.font.render(dice_text, 1, TEXT_COLOR)
-        self.screen.blit(dice_label, (BOARD_MARGIN, 10))
-
-        borne_off_text = f"Off: {board.borne_off[0]} | {board.borne_off[1]}"
-        off_label = self.small_font.render(borne_off_text, 1, TEXT_COLOR)
-        self.screen.blit(off_label, (self.width - 180, 10))
+        self._draw_info_panel(board, dice)
 
         if possible_actions:
             action_text = f"Moves: {len(possible_actions)}"
@@ -124,6 +118,52 @@ class BackgammonVisualEngine:
             selection = possible_actions[selected_index]
             move_text = f"Selected: {selection}"
             move_label = self.small_font.render(move_text, 1, BLUE)
-            self.screen.blit(move_label, (BOARD_MARGIN, self.height - 55))
+            label_rect = move_label.get_rect()
+            label_rect.topleft = (BOARD_MARGIN, self.height - 60)
+            pygame.draw.rect(
+                self.screen,
+                WHITE,
+                (label_rect.x - 6, label_rect.y - 4, label_rect.width + 12, label_rect.height + 8),
+            )
+            pygame.draw.rect(
+                self.screen,
+                BLUE,
+                (label_rect.x - 6, label_rect.y - 4, label_rect.width + 12, label_rect.height + 8),
+                2,
+            )
+            self.screen.blit(move_label, label_rect)
 
         pygame.display.update()
+
+    def _draw_info_panel(self, board, dice):
+        panel_rect = pygame.Rect(0, 0, self.width, BOARD_MARGIN)
+        pygame.draw.rect(self.screen, WHITE, panel_rect)
+
+        player_text = f"Turn: Player {board.turn}"
+        turn_label = self.small_font.render(player_text, 1, TEXT_COLOR)
+        self.screen.blit(turn_label, (BOARD_MARGIN, 8))
+
+        off_text = f"Off: {board.borne_off[0]} | {board.borne_off[1]}"
+        off_label = self.small_font.render(off_text, 1, TEXT_COLOR)
+        self.screen.blit(off_label, (self.width - 180, 8))
+
+        dice_start_x = self.width // 2 - DICE_SIZE - 8
+        self._draw_die(dice_start_x, 4, dice[0])
+        self._draw_die(dice_start_x + DICE_SIZE + 8, 4, dice[1])
+
+    def _draw_die(self, x, y, value):
+        die_rect = pygame.Rect(x, y, DICE_SIZE, DICE_SIZE)
+        pygame.draw.rect(self.screen, BOARD_COLOR, die_rect)
+        pygame.draw.rect(self.screen, BLACK, die_rect, 2)
+
+        pip_positions = {
+            1: [(0.5, 0.5)],
+            2: [(0.25, 0.25), (0.75, 0.75)],
+            3: [(0.25, 0.25), (0.5, 0.5), (0.75, 0.75)],
+            4: [(0.25, 0.25), (0.25, 0.75), (0.75, 0.25), (0.75, 0.75)],
+            5: [(0.25, 0.25), (0.25, 0.75), (0.5, 0.5), (0.75, 0.25), (0.75, 0.75)],
+            6: [(0.25, 0.2), (0.25, 0.5), (0.25, 0.8), (0.75, 0.2), (0.75, 0.5), (0.75, 0.8)],
+        }
+        for px, py in pip_positions.get(value, []):
+            center = (int(x + DICE_SIZE * px), int(y + DICE_SIZE * py))
+            pygame.draw.circle(self.screen, BLACK, center, 4)
