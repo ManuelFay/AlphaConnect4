@@ -128,6 +128,10 @@ class BackgammonBoard:
 
         return moves
 
+    def legal_single_moves(self, die: int) -> List[Move]:
+        """Public wrapper for single-die legal move generation."""
+        return self._legal_single_moves(die)
+
     def apply_single_move(self, move: Move) -> None:
         """Apply a single move to the board in-place."""
         src, dest, _die = move

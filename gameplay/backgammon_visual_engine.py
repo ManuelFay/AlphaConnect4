@@ -46,7 +46,16 @@ class BackgammonVisualEngine:
         y = BOARD_MARGIN if top else BOARD_MARGIN + POINT_HEIGHT
         return x, y
 
-    def draw_board(self, board, dice, possible_actions, selected_index):
+    def draw_board(
+        self,
+        board,
+        dice,
+        possible_actions,
+        selected_index,
+        last_action=None,
+        selected_src=None,
+        awaiting_roll=False,
+    ):
         """Draw the board, checkers, dice, and move list."""
         self.screen.fill(BOARD_COLOR)
 
@@ -104,7 +113,14 @@ class BackgammonVisualEngine:
                 y = BOARD_MARGIN + CHECKER_RADIUS + i * (CHECKER_RADIUS * 2 + CHECKER_SPACING)
                 pygame.draw.circle(self.screen, checker_color, (int(bar_x_center), int(y)), CHECKER_RADIUS)
 
-        self._draw_info_panel(board, dice)
+        if selected_src is not None:
+            self._highlight_point(selected_src, board.turn)
+
+        if last_action:
+            self._draw_last_action(last_action, board.turn)
+
+        self._draw_info_panel(board, dice, awaiting_roll=awaiting_roll)
+        self._draw_roll_button()
 
         if possible_actions:
             action_text = f"Moves: {len(possible_actions)}"
@@ -135,7 +151,7 @@ class BackgammonVisualEngine:
 
         pygame.display.update()
 
-    def _draw_info_panel(self, board, dice):
+    def _draw_info_panel(self, board, dice, awaiting_roll=False):
         panel_rect = pygame.Rect(0, 0, self.width, BOARD_MARGIN)
         pygame.draw.rect(self.screen, WHITE, panel_rect)
 
@@ -146,8 +162,13 @@ class BackgammonVisualEngine:
         off_text = f"Off: {board.borne_off[0]} | {board.borne_off[1]}"
         off_label = self.small_font.render(off_text, 1, TEXT_COLOR)
         self.screen.blit(off_label, (self.width - 180, 8))
+        self._draw_off_zone()
 
         dice_start_x = self.width // 2 - DICE_SIZE - 8
+        if awaiting_roll:
+            roll_text = "Click Roll"
+            roll_label = self.small_font.render(roll_text, 1, RED)
+            self.screen.blit(roll_label, (dice_start_x - 80, 8))
         self._draw_die(dice_start_x, 4, dice[0])
         self._draw_die(dice_start_x + DICE_SIZE + 8, 4, dice[1])
 
@@ -167,3 +188,102 @@ class BackgammonVisualEngine:
         for px, py in pip_positions.get(value, []):
             center = (int(x + DICE_SIZE * px), int(y + DICE_SIZE * py))
             pygame.draw.circle(self.screen, BLACK, center, 4)
+
+    def _draw_roll_button(self):
+        self.roll_rect = pygame.Rect(self.width - 130, self.height - 50, 100, 32)
+        pygame.draw.rect(self.screen, WHITE, self.roll_rect)
+        pygame.draw.rect(self.screen, BLUE, self.roll_rect, 2)
+        label = self.small_font.render("Roll", 1, BLUE)
+        label_rect = label.get_rect(center=self.roll_rect.center)
+        self.screen.blit(label, label_rect)
+
+    def is_roll_clicked(self, pos):
+        return hasattr(self, "roll_rect") and self.roll_rect.collidepoint(pos)
+
+    def point_at_pos(self, pos):
+        x, y = pos
+        if y < BOARD_MARGIN or y > self.height - BOARD_MARGIN:
+            return None
+
+        for idx in range(24):
+            is_top = idx >= 12
+            col = idx - 12 if is_top else 11 - idx
+            x_start = self._x_positions()[col]
+            x_end = x_start + POINT_WIDTH
+            if x_start <= x <= x_end:
+                if is_top and y <= BOARD_MARGIN + POINT_HEIGHT:
+                    return idx
+                if (not is_top) and y >= BOARD_MARGIN + POINT_HEIGHT:
+                    return idx
+
+        bar_x = BOARD_MARGIN + POINT_WIDTH * 6
+        if bar_x <= x <= bar_x + POINT_WIDTH:
+            return "bar"
+
+        off_rect = self._off_rect()
+        if off_rect.collidepoint(pos):
+            return "off"
+
+        return None
+
+    def _off_rect(self):
+        return pygame.Rect(self.width - 130, BOARD_MARGIN + 10, 100, 30)
+
+    def _draw_off_zone(self):
+        off_rect = self._off_rect()
+        pygame.draw.rect(self.screen, WHITE, off_rect)
+        pygame.draw.rect(self.screen, BLUE, off_rect, 2)
+        label = self.small_font.render("Off", 1, BLUE)
+        label_rect = label.get_rect(center=off_rect.center)
+        self.screen.blit(label, label_rect)
+
+    def _highlight_point(self, point, turn):
+        if point == "bar":
+            bar_x = BOARD_MARGIN + POINT_WIDTH * 6
+            rect = pygame.Rect(bar_x, BOARD_MARGIN, POINT_WIDTH, POINT_HEIGHT * 2)
+        elif point == "off":
+            rect = self._off_rect()
+        else:
+            is_top = point >= 12
+            col = point - 12 if is_top else 11 - point
+            x = self._x_positions()[col]
+            y = BOARD_MARGIN if is_top else BOARD_MARGIN + POINT_HEIGHT
+            rect = pygame.Rect(x, y, POINT_WIDTH, POINT_HEIGHT)
+        pygame.draw.rect(self.screen, RED if turn == 0 else BLUE, rect, 3)
+
+    def _draw_last_action(self, action, turn):
+        if not action:
+            return
+        move = action[-1]
+        src, dest, _ = move
+        src_pos = self._point_center(src)
+        dest_pos = self._point_center(dest)
+        if src_pos and dest_pos:
+            last_player = 1 - turn
+            color = RED if last_player == 0 else BLUE
+            pygame.draw.line(self.screen, color, src_pos, dest_pos, 3)
+            self._draw_arrow_head(dest_pos, src_pos, color)
+
+    def _point_center(self, point):
+        if point == "bar":
+            bar_x = BOARD_MARGIN + POINT_WIDTH * 6 + POINT_WIDTH / 2
+            return int(bar_x), int(self.height / 2)
+        if point == "off":
+            rect = self._off_rect()
+            return int(rect.centerx), int(rect.centery)
+        if isinstance(point, int):
+            is_top = point >= 12
+            col = point - 12 if is_top else 11 - point
+            x = self._x_positions()[col] + POINT_WIDTH / 2
+            y = BOARD_MARGIN + POINT_HEIGHT / 2 if is_top else BOARD_MARGIN + POINT_HEIGHT * 1.5
+            return int(x), int(y)
+        return None
+
+    def _draw_arrow_head(self, tip, tail, color):
+        dx = tip[0] - tail[0]
+        dy = tip[1] - tail[1]
+        length = max(1, (dx ** 2 + dy ** 2) ** 0.5)
+        ux, uy = dx / length, dy / length
+        left = (tip[0] - 10 * ux - 5 * uy, tip[1] - 10 * uy + 5 * ux)
+        right = (tip[0] - 10 * ux + 5 * uy, tip[1] - 10 * uy - 5 * ux)
+        pygame.draw.polygon(self.screen, color, [tip, left, right])

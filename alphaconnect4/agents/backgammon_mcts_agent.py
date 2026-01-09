@@ -12,7 +12,7 @@ from alphaconnect4.interfaces.backgammon_mcts_interface import BackgammonTree
 class BackgammonMCTSAgent(BaseAgent):
     def __init__(
         self,
-        simulation_time: float = 2.0,
+        simulation_time: float = 10.0,
         max_rollouts: int = None,
         show_pbar: bool = False,
     ):

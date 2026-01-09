@@ -4,7 +4,7 @@ from alphaconnect4.agents import BackgammonMCTSAgent
 from gameplay.backgammon_game import BackgammonGame
 
 agent0 = None
-agent1 = BackgammonMCTSAgent(simulation_time=2.0, show_pbar=True)
+agent1 = BackgammonMCTSAgent(simulation_time=10.0, show_pbar=True)
 
 
 game = BackgammonGame(agent0=agent0, agent1=agent1, enable_ui=True)
