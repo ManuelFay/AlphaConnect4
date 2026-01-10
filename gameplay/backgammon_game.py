@@ -65,48 +65,55 @@ class BackgammonGame:
     def _wait_for_human_move(self, dice_sequence):
         """Handle mouse selection for a human move, one die at a time."""
         action = []
-        for die in dice_sequence:
+        remaining_dice = list(dice_sequence)
+        selected_die_index = 0 if remaining_dice else None
+        selected_src = None
+
+        while remaining_dice:
+            die = remaining_dice[selected_die_index]
             legal_moves = self.board.legal_single_moves(die)
-            if not legal_moves:
-                continue
 
-            selected_src = None
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        sys.exit()
-                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        if self.visual_engine and self.visual_engine.is_roll_clicked(event.pos):
-                            continue
-                        clicked = self.visual_engine.point_at_pos(event.pos) if self.visual_engine else None
-                        if clicked is None:
-                            continue
-                        if selected_src is None:
-                            if any(move[0] == clicked for move in legal_moves):
-                                selected_src = clicked
-                        else:
-                            matching = [
-                                move for move in legal_moves if move[0] == selected_src and move[1] == clicked
-                            ]
-                            if matching:
-                                move = matching[0]
-                                self.board.apply_single_move(move)
-                                action.append(move)
-                                selected_src = None
-                                break
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.visual_engine and self.visual_engine.is_roll_clicked(event.pos):
+                        continue
+                    if self.visual_engine:
+                        die_index = self.visual_engine.die_at_pos(event.pos)
+                        if die_index is not None and die_index < len(remaining_dice):
+                            selected_die_index = die_index
                             selected_src = None
+                            continue
 
-                if self.visual_engine:
-                    display_actions = [self.board.describe_action([move]) for move in legal_moves]
-                    self.visual_engine.draw_board(
-                        self.board,
-                        self.dice,
-                        display_actions,
-                        0,
-                        last_action=self.last_action,
-                        selected_src=selected_src,
-                    )
-                time.sleep(0.05)
+                    clicked = self.visual_engine.point_at_pos(event.pos) if self.visual_engine else None
+                    if clicked is None:
+                        continue
+                    if any(move[0] == clicked for move in legal_moves):
+                        matching = [move for move in legal_moves if move[0] == clicked]
+                        if matching:
+                            move = matching[0]
+                            self.board.apply_single_move(move)
+                            action.append(move)
+                            remaining_dice.pop(selected_die_index)
+                            selected_die_index = 0 if remaining_dice else None
+                            selected_src = None
+                            continue
+                    selected_src = clicked
+
+            if self.visual_engine:
+                display_actions = [self.board.describe_action([move]) for move in legal_moves]
+                self.visual_engine.draw_board(
+                    self.board,
+                    self.dice,
+                    display_actions,
+                    0,
+                    last_action=self.last_action,
+                    selected_src=selected_src,
+                    remaining_dice=remaining_dice,
+                    selected_die_index=selected_die_index,
+                )
+            time.sleep(0.05)
 
         return action
 

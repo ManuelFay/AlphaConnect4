@@ -55,6 +55,8 @@ class BackgammonVisualEngine:
         last_action=None,
         selected_src=None,
         awaiting_roll=False,
+        remaining_dice=None,
+        selected_die_index=None,
     ):
         """Draw the board, checkers, dice, and move list."""
         self.screen.fill(BOARD_COLOR)
@@ -119,7 +121,13 @@ class BackgammonVisualEngine:
         if last_action:
             self._draw_last_action(last_action, board.turn)
 
-        self._draw_info_panel(board, dice, awaiting_roll=awaiting_roll)
+        self._draw_info_panel(
+            board,
+            dice,
+            awaiting_roll=awaiting_roll,
+            remaining_dice=remaining_dice,
+            selected_die_index=selected_die_index,
+        )
         self._draw_roll_button()
 
         if possible_actions:
@@ -151,7 +159,7 @@ class BackgammonVisualEngine:
 
         pygame.display.update()
 
-    def _draw_info_panel(self, board, dice, awaiting_roll=False):
+    def _draw_info_panel(self, board, dice, awaiting_roll=False, remaining_dice=None, selected_die_index=None):
         panel_rect = pygame.Rect(0, 0, self.width, BOARD_MARGIN)
         pygame.draw.rect(self.screen, WHITE, panel_rect)
 
@@ -169,13 +177,20 @@ class BackgammonVisualEngine:
             roll_text = "Click Roll"
             roll_label = self.small_font.render(roll_text, 1, RED)
             self.screen.blit(roll_label, (dice_start_x - 80, 8))
-        self._draw_die(dice_start_x, 4, dice[0])
-        self._draw_die(dice_start_x + DICE_SIZE + 8, 4, dice[1])
+        self.die_rects = []
+        left_value = dice[0]
+        right_value = dice[1]
+        highlight_left = selected_die_index == 0 if remaining_dice else False
+        highlight_right = selected_die_index == 1 if remaining_dice else False
+        self._draw_die(dice_start_x, 4, left_value, highlight=highlight_left)
+        self._draw_die(dice_start_x + DICE_SIZE + 8, 4, right_value, highlight=highlight_right)
 
-    def _draw_die(self, x, y, value):
+    def _draw_die(self, x, y, value, highlight=False):
         die_rect = pygame.Rect(x, y, DICE_SIZE, DICE_SIZE)
+        self.die_rects.append(die_rect)
         pygame.draw.rect(self.screen, BOARD_COLOR, die_rect)
-        pygame.draw.rect(self.screen, BLACK, die_rect, 2)
+        border_color = BLUE if highlight else BLACK
+        pygame.draw.rect(self.screen, border_color, die_rect, 3 if highlight else 2)
 
         pip_positions = {
             1: [(0.5, 0.5)],
@@ -199,6 +214,14 @@ class BackgammonVisualEngine:
 
     def is_roll_clicked(self, pos):
         return hasattr(self, "roll_rect") and self.roll_rect.collidepoint(pos)
+
+    def die_at_pos(self, pos):
+        if not hasattr(self, "die_rects"):
+            return None
+        for index, rect in enumerate(self.die_rects):
+            if rect.collidepoint(pos):
+                return index
+        return None
 
     def point_at_pos(self, pos):
         x, y = pos
